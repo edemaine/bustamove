@@ -98,13 +98,18 @@ keytimer = null
 keycurrent = null
 keyangle = 0.5*Math.PI
 keyspeed = 0.01
-keyinterval = 50
+keyeps = 3 * keyspeed
+keymin = 0 + keyeps
+keymax = Math.PI - keyeps
+keyinterval = 10
 
 keymove = (dir) ->
   clearInterval keytimer if keytimer?
   if dir != 0
     keytimer = setInterval () ->
       keyangle += dir * keyspeed
+      keyangle = keymin if keyangle < keymin
+      keyangle = keymax if keyangle > keymax
       drawTrajectory keyangle
       drawArrow keyangle
     , keyinterval
