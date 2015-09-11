@@ -23,7 +23,7 @@ radius = 1
 margin = 0.2
 sqrt3 = Math.sqrt(3)
 
-svg = svgballs = svgarrow = null
+svg = svgballs = svgarrow = svgaim = null
 balls = null
 xm = ym = null
 
@@ -58,6 +58,42 @@ drawArrow = (angle) ->
   svgarrow.clear()
   svgarrow.line(x, y, x + arrow_length * Math.cos(angle), y - arrow_length * Math.sin(angle)).stroke(arrow_stroke)
 
+ballTrajectory = (angle) ->
+  xmin = -1 * radius
+  xmax = (1 + xm) * radius
+  ymin = -1 * radius
+  rayShoot = (x,y, angle) ->
+    if angle < 0.5*Math.PI - 0.001
+      x2 = xmax
+      y2 = y - (xmax-x)*Math.tan(angle)
+    else if angle > 0.5*Math.PI + 0.001
+      x2 = xmin
+      y2 = y + (x-xmin)*Math.tan(angle)
+    else
+      y2 = ymin
+    if y2 > ymin
+      [x2, y2, Math.PI-angle]
+    else
+      [x + (y-ymin)*(Math.cos(angle)/Math.abs(Math.sin(angle))), ymin, angle]
+
+  x = xm / 2
+  y = ym * sqrt3
+  lst = []
+  while y>-1
+    lst.push [x,y]
+    [x, y, angle] = rayShoot(x,y,angle)
+  lst.push [x - (y-ymin)*Math.cos(angle)/Math.sin(angle), ymin]
+  lst
+
+trajectory_stroke =
+  color: 'black'
+  width: 0.1
+
+drawTrajectory = (angle) ->
+  svgaim.clear()
+  svgaim.polyline(ballTrajectory(angle)).fill('none').stroke(trajectory_stroke)
+
+
 keytimer = null
 keycurrent = null
 keyangle = 0.5*Math.PI
@@ -69,6 +105,7 @@ keymove = (dir) ->
   if dir != 0
     keytimer = setInterval () ->
       keyangle += dir * keyspeed
+      drawTrajectory keyangle
       drawArrow keyangle
     , keyinterval
 
@@ -94,6 +131,7 @@ test = () ->
   svg = SVG('surface')#.size width, height
   svgballs = svg.group()
   svgarrow = svg.group()
+  svgaim = svg.group()
   updateBalls ascii2balls '''
     B B B
      R R
@@ -107,6 +145,7 @@ test = () ->
       B
   '''
   drawBalls balls
+  drawTrajectory keyangle
   drawArrow keyangle
 
 ## Based on jolly.exe's code from http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
