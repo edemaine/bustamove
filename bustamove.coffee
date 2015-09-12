@@ -2,6 +2,7 @@ colors =
   B: 'blue'
   P: 'purple'
   R: 'red'
+  Y: 'yellow'
   ' ': null
 
 ## ASCII
@@ -24,22 +25,29 @@ margin = 0.2
 sqrt3 = Math.sqrt(3)
 
 svg = svgballs = svgarrow = svgaim = null
-balls = null
-xm = ym = null
-
-setBalls = (newBalls) ->
-  balls = newBalls if newBalls?
-  ym = balls.length - 1
-  xm = (Math.max (row.length for row in balls)...) - 1
-
+balls = rowCount = null
+xm = ym = null  ## center x/y coords are between 0 and xm/ym
 xmin = xmax = ymin = ymax = null
 keyangle = null
 
-draw = () ->
+setBalls = (newBalls) ->
+  balls = newBalls if newBalls?
+  rowCount = ((1 for char in row when colors[char]?).length for row in balls)
+  ym = balls.length - 1
+  xm = (Math.max (row.length for row in balls)...) - 1
   ymin = -1 * radius
   ymax = (1 + ym * sqrt3) * radius
   xmin = -1 * radius
   xmax = (1 + xm) * radius
+
+setBall = (x, y, color) ->
+  if colors[balls[y][x]]?
+    rowCount[y] -= 1
+  ball[y][x] = color
+  if colors[balls[y][x]]?
+    rowCount[y] += 1
+
+draw = () ->
   svg.viewbox xmin - margin, ymin - margin, xmax + margin, ymax + margin + 1.1
   ## xxx why +1.1?
   drawBalls()
@@ -84,11 +92,45 @@ ballTrajectory = (angle) ->
   x = xm / 2
   y = ym * sqrt3
   lst = []
-  while y > -1
+  while y > ymin
     lst.push [x,y]
     [x, y, angle] = rayShoot(x,y,angle)
   lst.push [x - (y-ymin)*Math.cos(angle)/Math.sin(angle), ymin]
   lst
+
+#firstOccupiedRow = () ->
+#  y1 = 0
+#  y2 = n
+#  while y1+1 < y2
+#    y = (y1 + y2) // 2
+#    if rowCount[y] == 0
+#      y2 = y
+#    else
+#      y1 = y
+#  if rowCount[y1] > 0
+#    y1
+#  else if rowCount[y2] > 0
+#    y2
+#  else
+#    null
+
+lineShot = (p,q) ->
+  x = p.x
+  y = p.y
+  perp = [-y, x]
+  #normalize perp...
+  yfloor = Math.floor(y / sqrt3)
+  yrange = [yfloor - 2 .. yfloor + 2]
+
+collisionDetect = (traj) ->
+  for p, i in traj[...-1]
+    q = traj[i+1]
+    y = Math.floor (q[1] - 2) / sqrt3
+    if rowCount[y] > 0
+      break
+  while y <= my and rowCount[y] > 0
+    y += 1
+  y -= 1
 
 trajectory_stroke =
   color: 'black'
