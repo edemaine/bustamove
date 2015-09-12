@@ -43,8 +43,8 @@ draw = () ->
   svg.viewbox xmin - margin, ymin - margin, xmax + margin, ymax + margin + 1.1
   ## xxx why +1.1?
   drawBalls()
-  drawArrow(keyangle)
-  drawTrajectory(keyangle)
+  drawArrow keyangle
+  drawTrajectory keyangle
 
 drawBalls = () ->
   svgballs.clear()
@@ -67,27 +67,24 @@ drawArrow = (angle) ->
   svgarrow.line(x, y, x + arrow_length * Math.cos(angle), y - arrow_length * Math.sin(angle)).stroke(arrow_stroke)
 
 ballTrajectory = (angle) ->
-  xmin = -1 * radius
-  xmax = (1 + xm) * radius
-  ymin = -1 * radius
   rayShoot = (x,y, angle) ->
     if angle < 0.5*Math.PI - 0.001
-      x2 = xmax
-      y2 = y - (xmax-x)*Math.tan(angle)
+      x2 = xmax - radius
+      y2 = y - (x2-x) * Math.tan angle
     else if angle > 0.5*Math.PI + 0.001
-      x2 = xmin
-      y2 = y + (x-xmin)*Math.tan(angle)
+      x2 = xmin + radius
+      y2 = y + (x-x2) * Math.tan angle
     else
       y2 = ymin
     if y2 > ymin
-      [x2, y2, Math.PI-angle]
+      [x2, y2, Math.PI - angle]
     else
-      [x + (y-ymin)*(Math.cos(angle)/Math.abs(Math.sin(angle))), ymin, angle]
+      [x + (y-ymin)*(Math.cos(angle)/Math.abs Math.sin angle), ymin, angle]
 
   x = xm / 2
   y = ym * sqrt3
   lst = []
-  while y>-1
+  while y > -1
     lst.push [x,y]
     [x, y, angle] = rayShoot(x,y,angle)
   lst.push [x - (y-ymin)*Math.cos(angle)/Math.sin(angle), ymin]
@@ -96,6 +93,7 @@ ballTrajectory = (angle) ->
 trajectory_stroke =
   color: 'black'
   width: 0.1
+  dasharray: [0.1, 0.1]
 
 drawTrajectory = (angle) ->
   svgaim.clear()
