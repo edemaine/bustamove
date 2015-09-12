@@ -114,13 +114,20 @@ ballTrajectory = (angle) ->
 #  else
 #    null
 
-lineShot = (p,q) ->
+lineShot = (p,alpha) ->
   x = p.x
   y = p.y
   perp = [-y, x]
   #normalize perp...
   yfloor = Math.floor(y / sqrt3)
   yrange = [yfloor - 2 .. yfloor + 2]
+
+collides = (p, alpha, q) ->
+  Math.abs((q.x - p.x)*Math.sin(alpha) + (q.y-p.y)*cos(alpha)) <= 2*radius
+
+collisionTime = (p, alpha, q) ->
+  d = ((q.x - p.x)*Math.sin(alpha) + (q.y-p.y)*cos(alpha))
+  ((q.x - p.x)*Math.cos(alpha) - (q.y-p.y)*sin(alpha)) - Math.sqrt(4-d*d)
 
 collisionDetect = (traj) ->
   for p, i in traj[...-1]
