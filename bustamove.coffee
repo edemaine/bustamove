@@ -27,18 +27,26 @@ svg = svgballs = svgarrow = svgaim = null
 balls = null
 xm = ym = null
 
-updateBalls = (newBalls) ->
+setBalls = (newBalls) ->
   balls = newBalls if newBalls?
   ym = balls.length - 1
   xm = (Math.max (row.length for row in balls)...) - 1
 
-drawBalls = (balls) ->
+xmin = xmax = ymin = ymax = null
+keyangle = null
+
+draw = () ->
   ymin = -1 * radius
   ymax = (1 + ym * sqrt3) * radius
   xmin = -1 * radius
   xmax = (1 + xm) * radius
   svg.viewbox xmin - margin, ymin - margin, xmax + margin, ymax + margin + 1.1
   ## xxx why +1.1?
+  drawBalls()
+  drawArrow(keyangle)
+  drawTrajectory(keyangle)
+
+drawBalls = () ->
   svgballs.clear()
   svgballs.rect(xmax-xmin, ymax-ymin).move(xmin, ymin).fill(border_fill).stroke(border_stroke)
   for row, y in balls
@@ -137,7 +145,7 @@ test = () ->
   svgballs = svg.group()
   svgarrow = svg.group()
   svgaim = svg.group()
-  updateBalls ascii2balls '''
+  setBalls ascii2balls '''
     B B B
      R R
     P P P
@@ -149,9 +157,7 @@ test = () ->
 
       B
   '''
-  drawBalls balls
-  drawTrajectory keyangle
-  drawArrow keyangle
+  draw()
 
 ## Based on jolly.exe's code from http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 getParameterByName = (name) ->
