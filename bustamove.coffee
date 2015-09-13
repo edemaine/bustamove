@@ -226,9 +226,12 @@ drawTrajectory = (angle) ->
 
 shootBall = (angle) ->
   bt = ballTrajectory(angle)
-  for p, i in bt[...-1]
-    q = bt[i+1]
-    svgshoot.animate().center(q[0], q[1])
+  i = 0
+  shoot = ->
+    i += 1
+    if i < bt.length
+      svgshoot.animate(200,'-').center(bt[i][0], bt[i][1]).after(shoot)
+  shoot()
 
 keytimer = null
 keycurrent = null
