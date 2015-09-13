@@ -114,30 +114,43 @@ ballTrajectory = (angle) ->
 #  else
 #    null
 
-lineShot = (p,alpha) ->
-  x = p.x
-  y = p.y
+distance = (p, q) ->
+  dx = p[0] - q[0]
+  dy = p[1] - q[1]
+  Math.sqrt dx * dx + dy * dy
+
+collides = (p, q, c) ->
+  d = distance p, q
+  cos = (q[0] - p[0]) / d
+  sin = (q[1] - p[1]) / d
+  Math.abs((c[0] - p[0])*sin + (c[1] - p[1])*cos) <= 2*radius
+  #Math.abs((q[0] - p[0])*Math.sin(alpha) + (q[1]-p[1])*Math.cos(alpha)) <= 2*radius
+
+collisionTime = (p, q, c) ->
+  d = distance p, q
+  cos = (q[0] - p[0]) / d
+  sin = (q[1] - p[1]) / d
+  ((c[0] - p[0])*cos - (c[1] - p[1])*sin) - Math.sqrt(4-d*d)
+  #d = ((q[0] - p[0])*Math.sin(alpha) + (q[1]-p[1])*Math.cos(alpha))
+  #((q[0] - p[0])*Math.cos(alpha) - (q[1] - p[1])*Math.sin(alpha)) - Math.sqrt(4-d*d)
+
+lineShot = (p, alpha, q) ->
+  x = p[0]
+  y = p[1]
   perp = [-y, x]
   #normalize perp...
   yfloor = Math.floor(y / sqrt3)
   yrange = [yfloor - 2 .. yfloor + 2]
 
-collides = (p, alpha, q) ->
-  Math.abs((q.x - p.x)*Math.sin(alpha) + (q.y-p.y)*cos(alpha)) <= 2*radius
-
-collisionTime = (p, alpha, q) ->
-  d = ((q.x - p.x)*Math.sin(alpha) + (q.y-p.y)*cos(alpha))
-  ((q.x - p.x)*Math.cos(alpha) - (q.y-p.y)*sin(alpha)) - Math.sqrt(4-d*d)
-
 collisionDetect = (traj) ->
   for p, i in traj[...-1]
     q = traj[i+1]
-    y = Math.floor (q[1] - 2) / sqrt3
+    y = Math.floor q[1]/sqrt3 - 2
     if rowCount[y] > 0
       break
-  while y <= my and rowCount[y] > 0
-    y += 1
-  y -= 1
+  #while y <= my and rowCount[y] > 0
+  #  y += 1
+  #y -= 1
 
 trajectory_stroke =
   color: 'black'
