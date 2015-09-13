@@ -74,8 +74,45 @@ drawArrow = (angle) ->
   svgarrow.clear()
   svgarrow.line(x, y, x + arrow_length * Math.cos(angle), y - arrow_length * Math.sin(angle)).stroke(arrow_stroke)
 
+#collides = (p, angle, q) ->
+#  Math.abs((q[0] - p[0])*Math.sin(angle) + (q[1]-p[1])*Math.cos(angle)) <= 2*radius
+
+collisionTime = (p, angle, q) ->
+  d = (q[0] - p[0])*Math.sin(angle) - (q[1] - p[1])*Math.cos(angle)
+  if Math.abs(d) <= 2*radius
+    ((q[0] - p[0])*Math.cos(angle) - (q[1] - p[1])*Math.sin(angle)) - Math.sqrt(4*radius*radius-d*d)
+  else
+    null
+
+findCollision = (p, p2, angle) ->
+  yfloor = Math.floor(p2[1] / sqrt3)
+  return null unless yfloor < 0 or rowCount[yfloor] > 0
+  xrange = [Math.min(p[0],p2[0])..Math.max(p[0],p2[0])]
+  slope = (Math.abs Math.sin angle) / Math.cos(angle)
+  tmin = tminx = tminy = null
+  for x in xrange
+    y = p[1] + (x-p[0]) * slope
+    yfloor = Math.floor(y / sqrt3)
+    yrange = [Math.max(0, yfloor - 2) .. Math.min(ym, yfloor + 2)]
+    for y in yrange
+      console.log x, y
+      if colors[balls[y][x]]?
+        t = collisionTime p, angle, [x,y*sqrt3]
+        if t != null and (tmin == null or t < tmin)
+          tmin = t
+          tminx = x
+          tminy = y * sqrt3
+  if tmin == null
+    null
+  else
+    [tminx,tminy]
+
 ballTrajectory = (angle) ->
-  rayShoot = (x,y, angle) ->
+  x = xm / 2
+  y = ym * sqrt3
+  lst = []
+  while y > ymin
+    lst.push [x,y]
     if angle < 0.5*Math.PI - 0.001
       x2 = xmax - radius
       y2 = y - (x2-x) * Math.tan angle
@@ -83,19 +120,20 @@ ballTrajectory = (angle) ->
       x2 = xmin + radius
       y2 = y + (x-x2) * Math.tan angle
     else
+      x2 = x
       y2 = ymin
+    collide = findCollision [x, y], [x2, y2], angle
+    if collide != null
+      [x,y] = collide
+      break
     if y2 > ymin
-      [x2, y2, Math.PI - angle]
+      x = x2
+      y = y2
+      angle = Math.PI - angle
     else
-      [x + (y-ymin)*(Math.cos(angle)/Math.abs Math.sin angle), ymin, angle]
-
-  x = xm / 2
-  y = ym * sqrt3
-  lst = []
-  while y > ymin
-    lst.push [x,y]
-    [x, y, angle] = rayShoot(x,y,angle)
-  lst.push [x - (y-ymin)*Math.cos(angle)/Math.sin(angle), ymin]
+      x += (y-ymin)*(Math.cos(angle)/Math.abs Math.sin angle)
+      y = ymin
+  lst.push [x, y]
   lst
 
 #firstOccupiedRow = () ->
@@ -114,25 +152,25 @@ ballTrajectory = (angle) ->
 #  else
 #    null
 
-distance = (p, q) ->
-  dx = p[0] - q[0]
-  dy = p[1] - q[1]
-  Math.sqrt dx * dx + dy * dy
-
-collides = (p, q, c) ->
-  d = distance p, q
-  cos = (q[0] - p[0]) / d
-  sin = (q[1] - p[1]) / d
-  Math.abs((c[0] - p[0])*sin + (c[1] - p[1])*cos) <= 2*radius
-  #Math.abs((q[0] - p[0])*Math.sin(alpha) + (q[1]-p[1])*Math.cos(alpha)) <= 2*radius
-
-collisionTime = (p, q, c) ->
-  d = distance p, q
-  cos = (q[0] - p[0]) / d
-  sin = (q[1] - p[1]) / d
-  ((c[0] - p[0])*cos - (c[1] - p[1])*sin) - Math.sqrt(4-d*d)
-  #d = ((q[0] - p[0])*Math.sin(alpha) + (q[1]-p[1])*Math.cos(alpha))
-  #((q[0] - p[0])*Math.cos(alpha) - (q[1] - p[1])*Math.sin(alpha)) - Math.sqrt(4-d*d)
+#distance = (p, q) ->
+#  dx = p[0] - q[0]
+#  dy = p[1] - q[1]
+#  Math.sqrt dx * dx + dy * dy
+#
+#collides = (p, q, c) ->
+#  d = distance p, q
+#  cos = (q[0] - p[0]) / d
+#  sin = (q[1] - p[1]) / d
+#  Math.abs((c[0] - p[0])*sin + (c[1] - p[1])*cos) <= 2*radius
+#  #Math.abs((q[0] - p[0])*Math.sin(alpha) + (q[1]-p[1])*Math.cos(alpha)) <= 2*radius
+#
+#collisionTime = (p, q, c) ->
+#  d = distance p, q
+#  cos = (q[0] - p[0]) / d
+#  sin = (q[1] - p[1]) / d
+#  ((c[0] - p[0])*cos - (c[1] - p[1])*sin) - Math.sqrt(4-d*d)
+#  #d = ((q[0] - p[0])*Math.sin(alpha) + (q[1]-p[1])*Math.cos(alpha))
+#  #((q[0] - p[0])*Math.cos(alpha) - (q[1] - p[1])*Math.sin(alpha)) - Math.sqrt(4-d*d)
 
 lineShot = (p, alpha, q) ->
   x = p[0]
