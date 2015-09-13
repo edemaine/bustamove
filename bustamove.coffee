@@ -24,7 +24,7 @@ radius = 1
 margin = 0.2
 sqrt3 = Math.sqrt(3)
 
-svg = svgballs = svgarrow = svgaim = null
+svg = svgballs = svgarrow = svgaim = svgshoot= null
 balls = rowCount = null
 xm = ym = null  ## center x/y coords are between 0 and xm/ym
 xmin = xmax = ymin = ymax = null
@@ -148,7 +148,7 @@ ballTrajectory = (angle) ->
       y2 = 0
     collide = findCollision [x, y], [x2, y2], angle
     if collide != null
-      svgaim.circle(2*radius).center(collide[0], collide[1]).stroke(stroke).fill('green')
+      svgaim.circle(radius/2).center(collide[0], collide[1]).stroke(stroke).fill('black')
       t = collisionTime [x,y], angle, collide
       [x, y] = [x + t*Math.cos(angle), y-t*Math.sin(angle)]
       break
@@ -220,9 +220,15 @@ drawTrajectory = (angle) ->
   svgaim.clear()
   bt = ballTrajectory(angle)
   last = bt[-1..-1][0]
+  svgshoot = svg.circle(2*radius).center(xm / 2, ym * sqrt3).stroke(stroke).fill('purple')
   svgaim.polyline(ballTrajectory(angle)).fill('none').stroke(trajectory_stroke)
-  svgaim.circle(2*radius).center(last[0], last[1]).stroke(stroke).fill('white')
+  svgaim.circle(2*radius).center(last[0], last[1]).stroke(trajectory_stroke).fill(border_fill)
 
+shootBall = (angle) ->
+  bt = ballTrajectory(angle)
+  for p, i in bt[...-1]
+    q = bt[i+1]
+    svgshoot.animate().center(q[0], q[1])
 
 keytimer = null
 keycurrent = null
@@ -253,6 +259,8 @@ keydown = (event) ->
     keymove +1
   else if event.keyIdentifier == 'Right'
     keymove -1
+  else if event.keyIdentifier == 'U+0020'
+    shootBall keyangle
   false
 
 keyup = (event) ->
@@ -267,6 +275,7 @@ test = () ->
   svgballs = svg.group()
   svgarrow = svg.group()
   svgaim = svg.group()
+  #svgshoot = svg.group()
   setBalls ascii2balls '''
     B B B B B
      R R 
