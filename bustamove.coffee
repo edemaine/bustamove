@@ -78,7 +78,7 @@ drawArrow = (angle) ->
 #  Math.abs((q[0] - p[0])*Math.sin(angle) + (q[1]-p[1])*Math.cos(angle)) <= 2*radius
 
 collisionTime = (p, angle, q) ->
-  d = (q[0] - p[0])*Math.sin(angle) - (q[1] - p[1])*Math.cos(angle)
+  d = (q[0] - p[0])*Math.sin(angle) + (q[1] - p[1])*Math.cos(angle)
   if Math.abs(d) <= 2*radius
     ((q[0] - p[0])*Math.cos(angle) - (q[1] - p[1])*Math.sin(angle)) - Math.sqrt(4*radius*radius-d*d)
   else
@@ -86,32 +86,53 @@ collisionTime = (p, angle, q) ->
 
 findCollision = (p, p2, angle) ->
   yfloor = Math.floor(p2[1] / sqrt3)
-  return null unless yfloor < 0 or rowCount[yfloor] > 0
-  xrange = [Math.min(p[0],p2[0])..Math.max(p[0],p2[0])]
-  slope = (Math.abs Math.sin angle) / Math.cos(angle)
+  return null unless yfloor >= 0 and rowCount[yfloor] > 0
+  xleft = xright = p[0]
   tmin = tminx = tminy = null
-  for x in xrange
-    y = p[1] + (x-p[0]) * slope
-    yfloor = Math.floor(y / sqrt3)
-    yrange = [Math.max(0, yfloor - 2) .. Math.min(ym, yfloor + 2)]
-    for y in yrange
-      console.log x, y
+  for y in [Math.ceil(p[1]/sqrt3)..Math.floor(p2[1]/sqrt3)]
+    xleft -= 1 while collisionTime(p, angle, [xleft-1, y*sqrt3])?
+    xleft += 1 until collisionTime(p, angle, [xleft, y*sqrt3])?
+    xright += 1 while collisionTime(p, angle, [xright+1,y*sqrt3])?
+    xright -= 1 until collisionTime(p, angle, [xright,y*sqrt3])?
+    for x in [xleft..xright]
       if colors[balls[y][x]]?
         t = collisionTime p, angle, [x,y*sqrt3]
         if t != null and (tmin == null or t < tmin)
           tmin = t
           tminx = x
           tminy = y * sqrt3
+        if t? and tmin? and t > tmin+2
+          break
   if tmin == null
     null
   else
     [tminx,tminy]
+        
+  #xrange = [Math.min(p[0],p2[0])..Math.min(2+Math.max(p[0],p2[0]),xm)]
+  #slope = (Math.abs Math.sin angle) / Math.cos(angle)
+  #tmin = tminx = tminy = null
+  #for x in xrange
+  #  y = p[1] + (x-p[0]) * slope
+  #  yfloor = Math.floor(y / sqrt3)
+  #  yrange = [Math.max(0, yfloor - 2) .. Math.min(ym, yfloor + 2)]
+  #  for y in yrange
+  #    #console.log x, y
+  #    if colors[balls[y][x]]?
+  #      t = collisionTime p, angle, [x,y*sqrt3]
+  #      if t != null and (tmin == null or t < tmin)
+  #        tmin = t
+  #        tminx = x
+  #        tminy = y * sqrt3
+  #if tmin == null
+  #  null
+  #else
+  #  [tminx,tminy]
 
 ballTrajectory = (angle) ->
   x = xm / 2
   y = ym * sqrt3
   lst = []
-  while y > ymin
+  while y > 0
     lst.push [x,y]
     if angle < 0.5*Math.PI - 0.001
       x2 = xmax - radius
@@ -121,18 +142,18 @@ ballTrajectory = (angle) ->
       y2 = y + (x-x2) * Math.tan angle
     else
       x2 = x
-      y2 = ymin
+      y2 = 0
+    if y2 <= 0
+      x2 += (y)*(Math.cos(angle)/Math.abs Math.sin angle)
+      y2 = 0
     collide = findCollision [x, y], [x2, y2], angle
     if collide != null
-      [x,y] = collide
+      svgaim.circle(2*radius).center(collide[0], collide[1]).stroke(stroke).fill('green')
+      t = collisionTime [x,y], angle, collide
+      [x, y] = [x + t*Math.cos(angle), y-t*Math.sin(angle)]
       break
-    if y2 > ymin
-      x = x2
-      y = y2
-      angle = Math.PI - angle
-    else
-      x += (y-ymin)*(Math.cos(angle)/Math.abs Math.sin angle)
-      y = ymin
+    [x, y] = [x2, y2]
+    angle = Math.PI-angle
   lst.push [x, y]
   lst
 
@@ -197,7 +218,10 @@ trajectory_stroke =
 
 drawTrajectory = (angle) ->
   svgaim.clear()
+  bt = ballTrajectory(angle)
+  last = bt[-1..-1][0]
   svgaim.polyline(ballTrajectory(angle)).fill('none').stroke(trajectory_stroke)
+  svgaim.circle(2*radius).center(last[0], last[1]).stroke(stroke).fill('white')
 
 
 keytimer = null
@@ -244,16 +268,17 @@ test = () ->
   svgarrow = svg.group()
   svgaim = svg.group()
   setBalls ascii2balls '''
-    B B B
-     R R
-    P P P
+    B B B B B
+     R R 
+    P    
+     R R R
 
 
 
 
 
 
-      B
+      
   '''
   draw()
 
