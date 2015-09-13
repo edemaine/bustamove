@@ -101,7 +101,7 @@ findCollision = (p, p2, angle) ->
           tmin = t
           tminx = x
           tminy = y * sqrt3
-        if t? and tmin? and t > tmin+2
+        if t? and (y+2)*sqrt3 < tminy
           break
   if tmin == null
     null
