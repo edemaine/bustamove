@@ -228,16 +228,20 @@ keytimer = null
 keycurrent = null
 keyangle = 0.5*Math.PI
 keyspeed = 0.01
+keyspeedslow = 0.002
 keyeps = 3 * keyspeed
 keymin = 0 + keyeps
 keymax = Math.PI - keyeps
 keyinterval = 10
 
-keymove = (dir) ->
+keymove = (dir, slow) ->
   clearInterval keytimer if keytimer?
   if dir != 0
     keytimer = setInterval () ->
-      keyangle += dir * keyspeed
+      if slow
+        keyangle += dir * keyspeedslow
+      else
+        keyangle += dir * keyspeed
       keyangle = keymin if keyangle < keymin
       keyangle = keymax if keyangle > keymax
       drawTrajectory keyangle
@@ -250,9 +254,9 @@ keydown = (event) ->
   else
     keycurrent = event.keyIdentifier
   if event.keyIdentifier == 'Left'
-    keymove +1
+    keymove +1, event.shiftKey
   else if event.keyIdentifier == 'Right'
-    keymove -1
+    keymove -1, event.shiftKey
   false
 
 keyup = (event) ->
@@ -268,7 +272,7 @@ test = () ->
   svgarrow = svg.group()
   svgaim = svg.group()
   setBalls ascii2balls '''
-    B B B B B
+    B B B B B  
      R R 
     P    
      R R R
