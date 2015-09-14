@@ -233,6 +233,29 @@ shootBall = (angle) ->
       svgshoot.animate(1000*distance(bt[i-1],bt[i])/(ymax-ymin),'-').center(bt[i][0], bt[i][1]).after(shoot)
   shoot()
 
+neighbors = (x,y) ->
+  ns = []
+  ns.push [x-1,y-1] if x > 0  and y > 0  #and colors[balls[x-1][y-1]]?
+  ns.push [x+1,y-1] if x < xm and y > 0  #and colors[balls[x+1][y-1]]?
+  ns.push [x-1,y+1] if x > 0  and y < ym #and colors[balls[x-1][y-1]]?
+  ns.push [x+1,y+1] if x < xm and y < ym #and colors[balls[x+1][y-1]]?
+  ns.push [x+2,y  ] if x < xm-1          #and colors[balls[x+2][y  ]]?
+  ns.push [x-2,y  ] if x > 1             #and colors[balls[x-2][y  ]]?
+  ns
+connectedComponent = (xy) ->
+  color = balls[xy[1]][xy[0]]
+  return unless color?
+  seen = {}
+  seen[xy] = true
+  frontier = [xy]
+  while frontier.length > 0
+    xy = frontier.pop()
+    for neighbor in neighbors xy...
+      if balls[neighbor[1]][neighbor[0]] == color and not seen[neighbor]
+        seen[neighbor] = true
+        frontier.push neighbor
+  key for own key of seen
+
 keytimer = null
 keycurrent = null
 keyangle = 0.5*Math.PI
