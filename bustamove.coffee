@@ -250,10 +250,14 @@ shootBall = (angle) ->
     [cc, fall] = impact [x,y]
     a = null
     for ball in cc
-      a = circles[ball].animate(1000,'-').opacity(0)
+      # xxx .radius(2) isn't working :-(
+      a = circles[ball].animate(750).radius(2).opacity(0).after(circles[ball].remove)
       setBall ball[0], ball[1], ' '
-    for ball in fall
-      a = circles[ball].animate(1000,'-').opacity(0.5).center(ball[0], (ym+2)*sqrt3).after(ball.remove)
+    delay = (500 * (2 - ball[0] / xm - ball[1] / ym) for ball in fall)
+    mindelay = Math.min delay...
+    delay = (d - mindelay for d in delay)
+    for ball, i in fall
+      a = circles[ball].animate(750,'<',delay[i]).opacity(0.5).center(ball[0], ball[1] + ym*sqrt3).after(circles[ball].remove)
       setBall ball[0], ball[1], ' '
     later = () ->
       newBall()
@@ -315,7 +319,6 @@ connectedToTop = (gone) ->
 
 impact = (added) ->
   cc = connectedComponent added
-  console.log cc
   cclist = set2list cc
   if cclist.length > 2
     top = connectedToTop cc
@@ -384,7 +387,8 @@ test = () ->
      R R 
     P    
      P R R
-
+        B Y
+         B
 
 
 
