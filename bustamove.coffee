@@ -30,6 +30,8 @@ xm = ym = null  ## center x/y coords are between 0 and xm/ym
 xmin = xmax = ymin = ymax = null
 keyangle = null
 
+ballseq = []
+
 setBalls = (newBalls) ->
   balls = ((c for c in row) for row in newBalls) if newBalls?
   rowCount = ((1 for char in row when colors[char]?).length for row in balls)
@@ -224,14 +226,15 @@ drawTrajectory = (angle) ->
   return if svgshoot == null
   [bt, collide] = ballTrajectory(angle)
   last = bt[-1..-1][0]
-  svgshoot = svgballs.circle(2*radius).center(xm / 2, ym * sqrt3).stroke(stroke).fill('purple')
   svgaim.polyline(bt).fill('none').stroke(trajectory_stroke)
   svgaim.circle(2*radius).center(last[0], last[1]).stroke(trajectory_stroke).fill(border_fill)
   if collide?
     svgaim.circle(radius/2).center(collide[0], collide[1]).stroke(stroke).fill('black')
 
 newBall = () ->
-  svgshoot = svgballs.circle(2*radius).center(xm / 2, ym * sqrt3).stroke(stroke).fill('purple')
+  if ballseq.length == 0
+    ballseq.push 'P'
+  svgshoot = svgballs.circle(2*radius).center(xm / 2, ym * sqrt3).stroke(stroke).fill(colors[ballseq[ballseq.length-1]])
 
 shootBall = (angle) ->
   return if svgshoot == null
@@ -242,7 +245,7 @@ shootBall = (angle) ->
     [x, y] = [Math.round(collide[0]+2*Math.cos(rot2)), Math.round((collide[1]+2*Math.sin(rot2))/sqrt3)]
   else
     [x, y] = [Math.round(bt[bt.length-1][0]/2)*2, Math.round(bt[bt.length-1][1]/sqrt3)]
-  setBall(x, y, 'P')
+  setBall(x, y, ballseq.pop())
   circles[[x,y]] = localshoot = svgshoot
   svgshoot = null
   drawTrajectory keyangle
@@ -396,8 +399,10 @@ test = () ->
 
       
   '''
-  newBall()
+  ballseq = ['P', 'R', 'B', 'P', 'R', 'B']
   draw()
+  newBall()
+  drawTrajectory keyangle
 
 ## Based on jolly.exe's code from http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 getParameterByName = (name) ->
