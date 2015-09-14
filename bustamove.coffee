@@ -47,6 +47,9 @@ setBall = (x, y, color) ->
   if colors[balls[y][x]]?
     rowCount[y] += 1
 
+getBall = (x, y) -> balls[y][x]
+isBall = (x, y) -> colors[balls[y][x]]?
+
 draw = () ->
   svg.viewbox xmin - margin, ymin - margin, xmax + margin, ymax + margin + 1.1
   ## xxx why +1.1?
@@ -95,7 +98,7 @@ findCollision = (p, p2, angle) ->
     xright += 1 while collisionTime(p, angle, [xright+1,y*sqrt3])?
     xright -= 1 until collisionTime(p, angle, [xright,y*sqrt3])?
     for x in [xleft..xright]
-      if colors[balls[y][x]]?
+      if isBall x, y
         t = collisionTime p, angle, [x,y*sqrt3]
         if t != null and (tmin == null or t < tmin)
           tmin = t
@@ -117,7 +120,7 @@ findCollision = (p, p2, angle) ->
   #  yrange = [Math.max(0, yfloor - 2) .. Math.min(ym, yfloor + 2)]
   #  for y in yrange
   #    #console.log x, y
-  #    if colors[balls[y][x]]?
+  #    if isBall x, y
   #      t = collisionTime p, angle, [x,y*sqrt3]
   #      if t != null and (tmin == null or t < tmin)
   #        tmin = t
@@ -242,19 +245,45 @@ neighbors = (x,y) ->
   ns.push [x+2,y  ] if x < xm-1          #and colors[balls[x+2][y  ]]?
   ns.push [x-2,y  ] if x > 1             #and colors[balls[x-2][y  ]]?
   ns
-connectedComponent = (xy) ->
-  color = balls[xy[1]][xy[0]]
-  return unless color?
+
+set2list = (set) -> key for own key of set
+
+bfs = (root, follow) ->
   seen = {}
-  seen[xy] = true
-  frontier = [xy]
+  frontier = []
+  for p in root
+    seen[p] = true
+    frontier.push p
   while frontier.length > 0
-    xy = frontier.pop()
-    for neighbor in neighbors xy...
-      if balls[neighbor[1]][neighbor[0]] == color and not seen[neighbor]
+    p = frontier.pop()
+    for neighbor in neighbors p...
+      if not seen[neighbor] and follow neighbor
         seen[neighbor] = true
         frontier.push neighbor
-  key for own key of seen
+  seen
+
+connectedComponent = (root) ->
+  color = balls[root[1]][root[0]]
+  bfs [root], (p) -> balls[p[1]][p[0]] == color
+
+connectedToTop = () ->
+  bfs ([x,0] for x in [0..xm] when isBall x, 0),
+      (p) -> isBall p...
+
+impact = (added) ->
+  cc = connectedComponent added
+  cclist = set2list cc
+  if cclist.length > 2
+    top = connectedToTop()
+    falling = []
+    for p in cclist
+      for neighbor in neighbors p...
+        unless p of cc or p of top
+          falling.push p
+    fall = bfs falling, (p) -> isBall p... and not (cc[p] or top[p])
+    [cclist, set2list fall]
+  else
+    [[], []]
 
 keytimer = null
 keycurrent = null
