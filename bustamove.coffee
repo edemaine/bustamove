@@ -239,8 +239,12 @@ shootBall = (angle) ->
   else
     [x, y] = [Math.round(bt[bt.length-1][0]/2)*2, Math.round(bt[bt.length-1][1]/sqrt3)]
   setBall(x, y, 'P')
+  drawTrajectory keyangle
   console.log "added"+[x,y]+" with color "+balls[y][x]
   i = 0
+  explode = ->
+    [cc, fall] = impact [x,y]
+    #for ball 
   shoot = ->
     i += 1
     if i < bt.length
@@ -251,8 +255,10 @@ shootBall = (angle) ->
       svgshoot.animate(50,'-').during (t) ->
         angle = rot + (rot2-rot)*t
         svgshoot.center(collide[0]+2*Math.cos(angle), collide[1]+2*Math.sin(angle))
+      .after explode
     else
       svgshoot.animate(50,'-').center(Math.round(bt[i-1][0]/2)*2,bt[i-1][1])
+        .after explode
   shoot()
 
 neighbors = (x,y) ->
@@ -299,7 +305,7 @@ impact = (added) ->
       for neighbor in neighbors p...
         unless p of cc or p of top
           falling.push p
-    fall = bfs falling, (p) -> isBall p... and not (cc[p] or top[p])
+    fall = bfs falling, (p) -> isBall(p...) and not (cc[p] or top[p])
     [cclist, set2list fall]
   else
     [[], []]
