@@ -260,7 +260,7 @@ shootBall = (angle) ->
     mindelay = Math.min delay...
     delay = (d - mindelay for d in delay)
     for ball, i in fall
-      a = circles[ball].animate(750,'<',delay[i]).opacity(0.5).center(ball[0], ball[1] + ym*sqrt3).after(circles[ball].remove)
+      a = circles[ball].animate(750,'<',delay[i]).opacity(0.5).center(ball[0], ball[1] + (ym+1)*sqrt3).after(circles[ball].remove)
       setBall ball[0], ball[1], ' '
     later = () ->
       newBall()
