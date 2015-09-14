@@ -31,7 +31,7 @@ xmin = xmax = ymin = ymax = null
 keyangle = null
 
 setBalls = (newBalls) ->
-  balls = newBalls if newBalls?
+  balls = ((c for c in row) for row in newBalls) if newBalls?
   rowCount = ((1 for char in row when colors[char]?).length for row in balls)
   ym = balls.length - 1
   xm = (Math.max (row.length for row in balls)...) - 1
@@ -43,7 +43,8 @@ setBalls = (newBalls) ->
 setBall = (x, y, color) ->
   if colors[balls[y][x]]?
     rowCount[y] -= 1
-  ball[y][x] = color
+  balls[y][x] = color
+  console.log "xyc"+[x,y,color,balls[y][x]]
   if colors[balls[y][x]]?
     rowCount[y] += 1
 
@@ -144,18 +145,17 @@ ballTrajectory = (angle) ->
       x2 = x
       y2 = 0
     if y2 <= 0
-      x2 += (y)*(Math.cos(angle)/Math.abs Math.sin angle)
+      x2 = x + (y)*(Math.cos(angle)/Math.abs(Math.sin(angle)))
       y2 = 0
     collide = findCollision [x, y], [x2, y2], angle
     if collide != null
-      svgaim.circle(radius/2).center(collide[0], collide[1]).stroke(stroke).fill('black')
       t = collisionTime [x,y], angle, collide
       [x, y] = [x + t*Math.cos(angle), y-t*Math.sin(angle)]
       break
     [x, y] = [x2, y2]
     angle = Math.PI-angle
   lst.push [x, y]
-  lst
+  [lst, collide]
 
 #firstOccupiedRow = () ->
 #  y1 = 0
@@ -218,19 +218,38 @@ trajectory_stroke =
 
 drawTrajectory = (angle) ->
   svgaim.clear()
-  bt = ballTrajectory(angle)
+  [bt, collide] = ballTrajectory(angle)
   last = bt[-1..-1][0]
-  svgshoot = svg.circle(2*radius).center(xm / 2, ym * sqrt3).stroke(stroke).fill('purple')
-  svgaim.polyline(ballTrajectory(angle)).fill('none').stroke(trajectory_stroke)
+  svgshoot = svgballs.circle(2*radius).center(xm / 2, ym * sqrt3).stroke(stroke).fill('purple')
+  svgaim.polyline(bt).fill('none').stroke(trajectory_stroke)
   svgaim.circle(2*radius).center(last[0], last[1]).stroke(trajectory_stroke).fill(border_fill)
+  if collide?
+    svgaim.circle(radius/2).center(collide[0], collide[1]).stroke(stroke).fill('black')
+
 
 shootBall = (angle) ->
-  bt = ballTrajectory(angle)
+  [bt, collide] = ballTrajectory(angle)
+  if collide?
+    rot = Math.acos((bt[bt.length-1][0]-collide[0])/2)
+    rot2 = Math.round(rot*3/Math.PI)*Math.PI/3
+    [x, y] = [Math.round(collide[0]+2*Math.cos(rot2)), Math.round((collide[1]+2*Math.sin(rot2))/sqrt3)]
+  else
+    [x, y] = [Math.round(bt[bt.length-1][0]/2)*2, Math.round(bt[bt.length-1][1]/sqrt3)]
+  setBall(x, y, 'P')
+  console.log "added"+[x,y]+" with color "+balls[y][x]
   i = 0
   shoot = ->
     i += 1
     if i < bt.length
       svgshoot.animate(1000*distance(bt[i-1],bt[i])/(ymax-ymin),'-').center(bt[i][0], bt[i][1]).after(shoot)
+    else if collide?
+      rot = Math.acos((bt[i-1][0]-collide[0])/2)
+      rot2 = Math.round(rot*3/Math.PI)*Math.PI/3
+      svgshoot.animate(50,'-').during (t) ->
+        angle = rot + (rot2-rot)*t
+        svgshoot.center(collide[0]+2*Math.cos(angle), collide[1]+2*Math.sin(angle))
+    else
+      svgshoot.animate(50,'-').center(Math.round(bt[i-1][0]/2)*2,bt[i-1][1])
   shoot()
 
 neighbors = (x,y) ->
@@ -307,7 +326,7 @@ test = () ->
   svgaim = svg.group()
   #svgshoot = svg.group()
   setBalls ascii2balls '''
-    B B B B B  
+    B B B B B       B
      R R 
     P    
      R R R
