@@ -24,7 +24,7 @@ radius = 1
 margin = 0.2
 sqrt3 = Math.sqrt(3)
 
-svg = svgballs = svgarrow = svgaim = svgshoot= null
+svg = svgballs = svgarrow = svgaim = svgshoot = null
 balls = rowCount = null
 xm = ym = null  ## center x/y coords are between 0 and xm/ym
 xmin = xmax = ymin = ymax = null
@@ -44,7 +44,6 @@ setBall = (x, y, color) ->
   if colors[balls[y][x]]?
     rowCount[y] -= 1
   balls[y][x] = color
-  console.log "xyc"+[x,y,color,balls[y][x]]
   if colors[balls[y][x]]?
     rowCount[y] += 1
 
@@ -58,6 +57,7 @@ draw = () ->
   drawArrow keyangle
   drawTrajectory keyangle
 
+circles = {}
 drawBalls = () ->
   svgballs.clear()
   svgballs.rect(xmax-xmin, ymax-ymin).move(xmin, ymin).fill(border_fill).stroke(border_stroke)
@@ -65,7 +65,7 @@ drawBalls = () ->
     for char, x in row
       color = colors[char]
       if color != null
-        svgballs.circle(2*radius).center(x, y * sqrt3).stroke(stroke).fill(color)
+        circles[[x,y]] = svgballs.circle(2*radius).center(x, y * sqrt3).stroke(stroke).fill(color)
 
 arrow_stroke =
   color: 'black'
@@ -221,6 +221,7 @@ trajectory_stroke =
 
 drawTrajectory = (angle) ->
   svgaim.clear()
+  return if svgshoot == null
   [bt, collide] = ballTrajectory(angle)
   last = bt[-1..-1][0]
   svgshoot = svgballs.circle(2*radius).center(xm / 2, ym * sqrt3).stroke(stroke).fill('purple')
@@ -229,8 +230,11 @@ drawTrajectory = (angle) ->
   if collide?
     svgaim.circle(radius/2).center(collide[0], collide[1]).stroke(stroke).fill('black')
 
+newBall = () ->
+  svgshoot = svgballs.circle(2*radius).center(xm / 2, ym * sqrt3).stroke(stroke).fill('purple')
 
 shootBall = (angle) ->
+  return if svgshoot == null
   [bt, collide] = ballTrajectory(angle)
   if collide?
     rot = Math.acos((bt[bt.length-1][0]-collide[0])/2)
@@ -239,25 +243,39 @@ shootBall = (angle) ->
   else
     [x, y] = [Math.round(bt[bt.length-1][0]/2)*2, Math.round(bt[bt.length-1][1]/sqrt3)]
   setBall(x, y, 'P')
+  circles[[x,y]] = localshoot = svgshoot
+  svgshoot = null
   drawTrajectory keyangle
-  console.log "added"+[x,y]+" with color "+balls[y][x]
-  i = 0
   explode = ->
     [cc, fall] = impact [x,y]
-    #for ball 
+    a = null
+    for ball in cc
+      a = circles[ball].animate(1000,'-').opacity(0)
+      setBall ball[0], ball[1], ' '
+    for ball in fall
+      a = circles[ball].animate(1000,'-').opacity(0)
+      setBall ball[0], ball[1], ' '
+    later = () ->
+      newBall()
+      drawTrajectory keyangle
+    if a == null
+      later()
+    else
+      a.after later
+  i = 0
   shoot = ->
     i += 1
     if i < bt.length
-      svgshoot.animate(1000*distance(bt[i-1],bt[i])/(ymax-ymin),'-').center(bt[i][0], bt[i][1]).after(shoot)
+      localshoot.animate(1000*distance(bt[i-1],bt[i])/(ymax-ymin),'-').center(bt[i][0], bt[i][1]).after(shoot)
     else if collide?
       rot = Math.acos((bt[i-1][0]-collide[0])/2)
       rot2 = Math.round(rot*3/Math.PI)*Math.PI/3
-      svgshoot.animate(50,'-').during (t) ->
+      localshoot.animate(50,'-').during (t) ->
         angle = rot + (rot2-rot)*t
-        svgshoot.center(collide[0]+2*Math.cos(angle), collide[1]+2*Math.sin(angle))
+        localshoot.center(collide[0]+2*Math.cos(angle), collide[1]+2*Math.sin(angle))
       .after explode
     else
-      svgshoot.animate(50,'-').center(Math.round(bt[i-1][0]/2)*2,bt[i-1][1])
+      localshoot.animate(50,'-').center(Math.round(bt[i-1][0]/2)*2,bt[i-1][1])
         .after explode
   shoot()
 
@@ -271,7 +289,7 @@ neighbors = (x,y) ->
   ns.push [x-2,y  ] if x > 1             #and colors[balls[x-2][y  ]]?
   ns
 
-set2list = (set) -> key for own key of set
+set2list = (set) -> (parseInt(x) for x in key.split(',')) for own key of set
 
 bfs = (root, follow) ->
   seen = {}
@@ -302,6 +320,7 @@ impact = (added) ->
     top = connectedToTop()
     falling = []
     for p in cclist
+      console.log p[0], p[1]
       for neighbor in neighbors p...
         unless p of cc or p of top
           falling.push p
@@ -364,7 +383,7 @@ test = () ->
     B B B B B       B
      R R 
     P    
-     R R R
+     P R R
 
 
 
@@ -373,6 +392,7 @@ test = () ->
 
       
   '''
+  newBall()
   draw()
 
 ## Based on jolly.exe's code from http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
