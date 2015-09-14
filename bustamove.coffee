@@ -173,11 +173,11 @@ ballTrajectory = (angle) ->
 #  else
 #    null
 
-#distance = (p, q) ->
-#  dx = p[0] - q[0]
-#  dy = p[1] - q[1]
-#  Math.sqrt dx * dx + dy * dy
-#
+distance = (p, q) ->
+  dx = p[0] - q[0]
+  dy = p[1] - q[1]
+  Math.sqrt dx * dx + dy * dy
+
 #collides = (p, q, c) ->
 #  d = distance p, q
 #  cos = (q[0] - p[0]) / d
@@ -230,7 +230,7 @@ shootBall = (angle) ->
   shoot = ->
     i += 1
     if i < bt.length
-      svgshoot.animate(200,'-').center(bt[i][0], bt[i][1]).after(shoot)
+      svgshoot.animate(1000*distance(bt[i-1],bt[i])/(ymax-ymin),'-').center(bt[i][0], bt[i][1]).after(shoot)
   shoot()
 
 keytimer = null
