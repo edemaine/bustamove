@@ -253,7 +253,7 @@ shootBall = (angle) ->
       a = circles[ball].animate(1000,'-').opacity(0)
       setBall ball[0], ball[1], ' '
     for ball in fall
-      a = circles[ball].animate(1000,'-').opacity(0)
+      a = circles[ball].animate(1000,'-').opacity(0.5).center(ball[0], (ym+2)*sqrt3).after(ball.remove)
       setBall ball[0], ball[1], ' '
     later = () ->
       newBall()
@@ -309,22 +309,22 @@ connectedComponent = (root) ->
   color = balls[root[1]][root[0]]
   bfs [root], (p) -> balls[p[1]][p[0]] == color
 
-connectedToTop = () ->
+connectedToTop = (gone) ->
   bfs ([x,0] for x in [0..xm] when isBall x, 0),
-      (p) -> isBall p...
+      (p) -> isBall(p...) and p not of gone
 
 impact = (added) ->
   cc = connectedComponent added
+  console.log cc
   cclist = set2list cc
   if cclist.length > 2
-    top = connectedToTop()
+    top = connectedToTop cc
     falling = []
     for p in cclist
-      console.log p[0], p[1]
       for neighbor in neighbors p...
-        unless p of cc or p of top
-          falling.push p
-    fall = bfs falling, (p) -> isBall(p...) and not (cc[p] or top[p])
+        if isBall(neighbor...) and not (neighbor of cc or neighbor of top)
+          falling.push neighbor
+    fall = bfs falling, (p) -> isBall(p...) and not (p of cc or p of top)
     [cclist, set2list fall]
   else
     [[], []]
