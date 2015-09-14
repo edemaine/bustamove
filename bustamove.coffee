@@ -317,7 +317,7 @@ connectedComponent = (root) ->
   bfs [root], (p) -> balls[p[1]][p[0]] == color
 
 connectedToTop = (gone) ->
-  bfs ([x,0] for x in [0..xm] when isBall x, 0),
+  bfs ([x,0] for x in [0..xm] when isBall(x, 0) and [x,0] not of gone),
       (p) -> isBall(p...) and p not of gone
 
 impact = (added) ->
