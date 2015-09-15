@@ -181,6 +181,10 @@ loadState = () ->
   setState window.location.hash
 
 setViewbox = () ->
+  for panel in [0...activePanels]
+    svgpanel[panel].style 'display', 'inline'
+  for panel in [activePanels...npanels]
+    svgpanel[panel].style 'display', 'none'
   width = xmax + margin + - (xmin - margin) + 1.1
   svg.viewbox xmin - margin, ymin - margin, xmax + margin + 1.1 + (activePanels-1)*width, ymax + margin + 1.1
   ## xxx why +1.1?
