@@ -205,11 +205,12 @@ draw = () ->
   newBall()
   drawTrajectory keyangle
 
+svggroups = null
 makeCircle = (x, y, color) ->
   circles[[x,y]] =
     for panel in [0...npanels]
-      #svgballs[panel].circle(2*radius).center(x, y * sqrt3).stroke(stroke).fill(colors[color])
-      svgballs[panel].image("img/ball_#{colors[color]}.png",2*radius,2*radius).center(x, y * sqrt3)
+      #svggroups[panel][y].circle(2*radius).center(x, y * sqrt3).stroke(stroke).fill(colors[color])
+      svggroups[panel][y].image("img/ball_#{colors[color]}.png",2*radius,2*radius).center(x, y * sqrt3)
         .style('image-rendering', 'pixelated')
 
 circles = {}
@@ -217,6 +218,7 @@ drawBalls = () ->
   for panel in [0...npanels]
     svgballs[panel].clear()
     svgballs[panel].rect(xmax-xmin, ymax-ymin).move(xmin, ymin).fill(border_fill).stroke(border_stroke)
+  svggroups = ((svgballs[panel].group() for y in [0..ym]) for panel in [0...npanels])
   for row, y in balls
     for char, x in row
       if colors[char]?
