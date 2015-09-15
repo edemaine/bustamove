@@ -583,7 +583,6 @@ reduc2balls = (reduc) ->
   pluglayer = ascii2balls "\n\n"
   splitlayer = ascii2balls "\n\n"
   nplugs = 0
-  plugpos = []
   console.log 
   for c in red[red.length-1]
     console.log parseInt(c)
@@ -597,6 +596,7 @@ reduc2balls = (reduc) ->
   board = pluglayer.concat setlayer
   board = splitlayer.concat board
   board = repeatballs(plugGadget, nplugs).concat board
+  plugpos = [1..nplugs]
   #for i in [red.length-2..0]
   #  alayer = 
   #  for c in red[i]   
@@ -668,8 +668,8 @@ test = () ->
     WWXWW
     321
     '''
-  setBalls reduc2balls(someReduction)
-  #setBalls sample
+  #setBalls reduc2balls(someReduction)
+  setBalls board
   ballseqstr = "BYYYBBBBRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBBBYYYYYYYBBBBBBBRRRRRBBBBBYYYYYYBBBBBBRRRR"
   ballseq = (ballseqstr[i] for i in [ballseqstr.length-1..0])
   draw()
