@@ -12,6 +12,23 @@ ascii2balls = (ascii) ->
   ## Turn string into a 2D array of characters.
   ascii.replace(/\r\n/g, '\n').replace(/\r/g,'\n').split('\n')
 
+glueballs = (b1, brest...) ->
+  ## glue horizontally. All rows must be same length, number of rows must be the same.
+  if brest.length == 0
+    balls = b1
+  else
+    balls = []
+    b2 = glueballs(brest...)
+    for i in [0...b1.length]
+      balls.push b1[i]+b2[i]
+  balls
+
+repeatballs = (b, k) ->
+  if k == 1
+    b
+  else
+    glueballs(b,repeatballs(b, k-1))
+
 stroke =
   color: 'black'
   width: 0.1
@@ -384,6 +401,163 @@ keyup = (event) ->
   keymove 0
   false
 
+andLeftGadget = ascii2balls """
+   B R          
+  B R   B       
+   B R B R R R R
+  B B Y Y B B B 
+   B B Y B B B B
+  """
+
+andMid3Gadget = ascii2balls """
+        
+        
+   R R R
+  B B B 
+   B B B
+  """
+
+andMid4Gadget = ascii2balls """
+          
+          
+   R R R R
+  B B B B 
+   B B B B
+  """
+
+andBlankGadget = ascii2balls '''
+   B
+  B 
+   B
+  B 
+   B
+  '''
+
+andBlank3Gadget = repeatballs andBlankGadget, 3
+
+andBlank4Gadget = repeatballs andBlankGadget, 4
+
+andRightGadget = ascii2balls """
+         R B B B
+      B   R B B 
+   R R B R B B B
+  B B Y Y B B B 
+   B B Y B B B B
+  """
+
+andWireGadget = orWireGadget = ascii2balls '''
+   B Y B B Y B B
+  B B Y Y Y B B 
+   B B Y B B B B
+  B B B Y B B B 
+   B B Y B B B B
+  '''
+
+orLeftGadget = ascii2balls """
+   R         B B
+  B R   B B B B 
+   B R B R R R R
+  B B Y Y B B B 
+   B B Y B B B B
+  """
+
+orMiddleGadget = ascii2balls """
+                
+  B B B B B B B 
+   R R R R R R R
+  B B B B B B B 
+   B B B B B B B
+  """
+
+orRightGadget = ascii2balls """
+           R B B
+  B B B   R B B 
+   R R B R B B B
+  B B Y Y B B B 
+   B B Y B B B B
+  """
+
+xoverGadget = ascii2balls '''
+   R   B B           B B   R B
+  R                         R 
+   R                       R B
+  B R R R R         R R R R B 
+   R                       R B
+  R                         R 
+   R                       R B
+  R                         R 
+   R B B B R R R R R B B B R B
+  B Y Y Y Y B B B B Y Y Y Y B 
+   B B Y B B B B B B Y B B B B
+  '''
+
+xoverWireGadget = ascii2balls '''
+   B Y B B Y B B
+  B B Y Y Y B B 
+   B B Y B B B B
+  B B B Y B B B 
+   B B Y B B B B
+  B B B Y B B B 
+   B B Y B B B B
+  B B B Y B B B 
+   B B Y B B B B
+  B B B Y B B B 
+   B B Y B B B B
+  '''
+
+splitLeftGadget = ascii2balls """
+   B Y B B B B B
+  B B Y Y Y Y Y 
+   B B Y B B B B"""
+
+splitMiddleGadget = ascii2balls '''
+   B B B B B B B
+  Y Y Y Y Y Y Y 
+   B B B B B B B'''
+
+splitRightGadget = ascii2balls '''
+   B B B B Y B B
+  Y Y Y Y Y B B 
+   B B B B B B B'''
+
+splitWireGadget = ascii2balls '''
+   B Y B B Y B B
+  B B Y Y Y B B 
+   B B Y B B B B'''
+
+splitNoGadget = ascii2balls '''
+   B B B B B B B
+  B B B B B B B 
+   B B B B B B B'''
+
+plugLeftGadget = ascii2balls '''
+  B B B 
+   B B B
+  R R R '''
+
+plugRightGadget = ascii2balls '''
+  B B B B 
+   B B B B
+  R R R R '''
+
+plugGadget = ascii2balls '''
+  B B Y B B B B 
+   B B Y R B B B
+  R R R Y R R R '''
+
+noplugGadget = ascii2balls '''
+  B B B B B B B 
+   B B B B B B B
+  R R R R R R R '''
+
+whitesp = "              \n"
+setLine = "     B B      \n"
+setGadget = ascii2balls setLine
+
+nosetGadget = ascii2balls whitesp
+
+blankGadget = ascii2balls whitesp
+
 test = () ->
   window.addEventListener 'keydown', keydown
   window.addEventListener 'keyup', keyup
@@ -392,7 +566,7 @@ test = () ->
   svgarrow = svg.group()
   svgaim = svg.group()
   #svgshoot = svg.group()
-  setBalls ascii2balls '''
+  sample = ascii2balls '''
     B B B B B       B
      R R 
     P    
@@ -406,7 +580,38 @@ test = () ->
 
       
   '''
-  ballseq = ['P', 'R', 'B', 'P', 'R', 'B']
+  board = []
+  board = board.concat glueballs(plugLeftGadget, plugLeftGadget, plugGadget, plugRightGadget, plugRightGadget)
+  board = board.concat glueballs(andBlank3Gadget, andLeftGadget, andMid4Gadget, andRightGadget)
+#  board = board.concat(repeatballs andBlankGadget, 21)
+  board = board.concat glueballs(plugLeftGadget, plugGadget, plugRightGadget, plugGadget)
+  board = board.concat glueballs(orLeftGadget, orRightGadget, orWireGadget)
+  board = board.concat glueballs(plugGadget, plugGadget, plugGadget)
+  board = board.concat glueballs(xoverWireGadget, xoverGadget)
+  board = board.concat glueballs(plugGadget, plugGadget, plugGadget)
+  board = board.concat glueballs(splitLeftGadget, splitRightGadget, splitWireGadget)
+  board = board.concat glueballs(plugGadget, noplugGadget, plugGadget)
+  board = board.concat glueballs(setGadget, nosetGadget, setGadget)
+  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  setBalls board
+  #setBalls sample
+  ballseqstr = "BYYYBBBBRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBBBYYYYYYYBBBBBBBRRRRRBBBBBYYYYYYBBBBBBRRRR"
+  ballseq = (ballseqstr[i] for i in [ballseqstr.length-1..0])
   draw()
   newBall()
   drawTrajectory keyangle
