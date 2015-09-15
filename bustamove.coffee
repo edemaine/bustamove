@@ -181,7 +181,7 @@ loadState = () ->
   setState window.location.hash
 
 setViewbox = () ->
-  width = xmax + margin + - (xmin - margin)
+  width = xmax + margin + - (xmin - margin) + 1.1
   svg.viewbox xmin - margin, ymin - margin, xmax + margin + 1.1 + (activePanels-1)*width, ymax + margin + 1.1
   ## xxx why +1.1?
   for panel in [0...npanels]
