@@ -869,11 +869,11 @@ reduc2balls = (reduc) ->
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   board
 
-expandBalls = (board, m) ->
+expandBalls = (board, m, fake = false) ->
   newboard = []
   k = Math.max(Math.ceil((m-(board[0].length)/2)/2), 0)
   for row in board
-    if row.length < 2
+    if row.length < 2 or fake
       ball = "  "
     else
       ball = row[0..1]
@@ -910,6 +910,16 @@ exampleBoard = (b) ->
       321
       '''
     return reduc2balls(someReduction)
+  else if b == 'B'
+    someReduction = '''
+      A
+      AA
+      WWOO
+      WXXW
+      WWXWW
+      321
+      '''
+    return expandBalls(reduc2balls(someReduction),500,true)
 
 
 init = (config) ->
@@ -972,7 +982,7 @@ init = (config) ->
   ballseqstr = "BYYYBBBBRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBBBYYYYYYYBBBBBBBRRRRRBBBBBYYYYYYBBBBBBRRRR"
 
   unless loadState()
-    setBalls exampleBoard('F')
+    setBalls exampleBoard('B')
     ballseq = (ballseqstr[i] for i in [ballseqstr.length-1..0])
     #pushState()
     draw()
