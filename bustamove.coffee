@@ -166,18 +166,21 @@ decompress = (compress, fill = '') ->
 
 setState = (state) ->
   return if state == currentState
-  seq = decompress getParameterByName state, 'seq'
-  config = getParameterByName state, 'config'
-  return false unless seq? and config?
-  ballseq = (x for x in seq)
-  rows =
-    for row, y in config.split '|'
-      row = (if y % 2 == 0 then '' else ' ') + decompress row, ' '
-      while row[-1..] == ' '
-        row = row[...-1]
-      row
-  currentState = state
-  setBalls rows
+  if getParameterByName state, 'example'
+    setBalls exampleBoard getParameterByName state, 'example'
+  else
+    seq = decompress getParameterByName state, 'seq'
+    config = getParameterByName state, 'config'
+    return false unless seq? and config?
+    ballseq = (x for x in seq)
+    rows =
+      for row, y in config.split '|'
+        row = (if y % 2 == 0 then '' else ' ') + decompress row, ' '
+        while row[-1..] == ' '
+          row = row[...-1]
+        row
+    currentState = state
+    setBalls rows
   draw()
   true
 
@@ -883,13 +886,13 @@ expandBalls = (board, m) ->
 exampleBoard = (b) ->
   if b == 'X'
     return expandBalls(reduc2balls("X\n11"),5)
-  if b == 'S'
+  else if b == 'S'
     return expandBalls(reduc2balls("123"),6)
-  if b == 'O'
+  else if b == 'O'
     return expandBalls(reduc2balls("OO\n1111"),6)
-  if b == 'A'
+  else if b == 'A'
     return expandBalls(reduc2balls("AA\n1111"),6)
-  if b == 'F'
+  else if b == 'F'
     smallReduction = '''
       A
       OO
@@ -897,6 +900,16 @@ exampleBoard = (b) ->
       211
       '''
     return expandBalls(reduc2balls(smallReduction),12)
+  else if b == 'G'
+    someReduction = '''
+      A
+      AA
+      WWOO
+      WXXW
+      WWXWW
+      321
+      '''
+    return reduc2balls(someReduction)
 
 
 init = (config) ->
@@ -924,23 +937,23 @@ init = (config) ->
 
       
   '''
-  board = []
-  board = board.concat glueballs(plugLeftGadget, plugLeftGadget, plugGadget, plugRightGadget, plugRightGadget)
-  board = board.concat glueballs(andBlank3Gadget, andLeftGadget, andMid4Gadget, andRightGadget)
-#  board = board.concat(repeatballs andBlankGadget, 21)
-  board = board.concat glueballs(plugLeftGadget, plugGadget, plugRightGadget, plugGadget)
-  board = board.concat glueballs(orLeftGadget, orRightGadget, orWireGadget)
-  board = board.concat glueballs(plugGadget, plugGadget, plugGadget)
-  board = board.concat glueballs(xoverWireGadget, xoverGadget)
-  board = board.concat glueballs(plugGadget, plugGadget, plugGadget)
-  board = board.concat glueballs(splitLeftGadget, splitRightGadget, splitWireGadget)
-  board = board.concat glueballs(plugGadget, noplugGadget, plugGadget)
-  board = board.concat glueballs(setGadget, nosetGadget, setGadget)
-  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
-  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
-  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
-  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
-  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = []
+  #board = board.concat glueballs(plugLeftGadget, plugLeftGadget, plugGadget, plugRightGadget, plugRightGadget)
+  #board = board.concat glueballs(andBlank3Gadget, andLeftGadget, andMid4Gadget, andRightGadget)
+# # board = board.concat(repeatballs andBlankGadget, 21)
+  #board = board.concat glueballs(plugLeftGadget, plugGadget, plugRightGadget, plugGadget)
+  #board = board.concat glueballs(orLeftGadget, orRightGadget, orWireGadget)
+  #board = board.concat glueballs(plugGadget, plugGadget, plugGadget)
+  #board = board.concat glueballs(xoverWireGadget, xoverGadget)
+  #board = board.concat glueballs(plugGadget, plugGadget, plugGadget)
+  #board = board.concat glueballs(splitLeftGadget, splitRightGadget, splitWireGadget)
+  #board = board.concat glueballs(plugGadget, noplugGadget, plugGadget)
+  #board = board.concat glueballs(setGadget, nosetGadget, setGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
@@ -955,14 +968,6 @@ init = (config) ->
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = sample
-  someReduction = '''
-    A
-    AA
-    WWOO
-    WXXW
-    WWXWW
-    321
-    '''
 
   ballseqstr = "BYYYBBBBRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBBBYYYYYYYBBBBBBBRRRRRBBBBBYYYYYYBBBBBBRRRR"
 
