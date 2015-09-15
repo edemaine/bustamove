@@ -47,10 +47,13 @@ sqrt3 = Math.sqrt(3)
 npanels = 3
 svg = null
 svgpanel = (null for i in [0...npanels])
+svgclip = (null for i in [0...npanels])
+svgtop = (null for i in [0...npanels])
 svgballs = (null for i in [0...npanels])
 svgarrow = (null for i in [0...npanels])
 svgaim = (null for i in [0...npanels])
 svgshoot = (null for i in [0...npanels])
+svgwidth = svgheight = null
 balls = rowCount = null
 xm = ym = null  ## center x/y coords are between 0 and xm/ym
 xmin = xmax = ymin = ymax = null
@@ -185,11 +188,13 @@ setViewbox = () ->
     svgpanel[panel].style 'display', 'inline'
   for panel in [activePanels...npanels]
     svgpanel[panel].style 'display', 'none'
-  width = xmax + margin + - (xmin - margin) + 1.1
-  svg.viewbox xmin - margin, ymin - margin, xmax + margin + 1.1 + (activePanels-1)*width, ymax + margin + 1.1
+  svgwidth = xmax + margin - (xmin - margin) + 1.1
+  svgheight = ymax + margin - (ymin - margin) + 1.1
+  svg.viewbox xmin - margin, ymin - margin, xmax + margin + 1.1 + (activePanels-1)*svgwidth, ymax + margin + 1.1
   ## xxx why +1.1?
   for panel in [0...npanels]
-    svgpanel[panel].translate panel * width, 0
+    svgpanel[panel].translate panel * svgwidth, 0
+    svgclip[panel].move(xmin - margin, ymin - margin).size(svgwidth, svgheight)
 
 draw = () ->
   setViewbox()
@@ -312,6 +317,11 @@ ballTrajectory = (angle) ->
   lst.push [x, y]
   [lst, collide]
 
+firstOccupiedRow = () ->
+  for y in [ym..0]
+    if rowCount[y] > 0
+      return y
+  0
 #firstOccupiedRow = () ->
 #  y1 = 0
 #  y2 = n
@@ -383,6 +393,8 @@ drawTrajectory = (angle) ->
     ## Black dots:
     #if collide?
     #  svgaim[panel].circle(radius/2).center(collide[0], collide[1]).stroke(stroke).fill('black')
+  bigscale = 3
+  svgtop[1].attr 'transform', "scale(#{bigscale}) translate(#{-last[0]+svgwidth/2/bigscale} #{-firstOccupiedRow()*sqrt3+svgheight*(3/4)/bigscale})"
 
 newBall = () ->
   if ballseq.length == 0
@@ -729,9 +741,7 @@ reduc2balls = (reduc) ->
   pluglayer = ascii2balls "\n\n"
   splitlayer = ascii2balls "\n\n"
   nplugs = 0
-  console.log 
   for c in red[red.length-1]
-    console.log parseInt(c)
     setlayer = glueballs(setlayer, setGadget, repeatballs(nosetGadget,parseInt(c)-1))
     pluglayer = glueballs(pluglayer, plugGadget, repeatballs(noplugGadget,parseInt(c)-1))
     if c == "1"
@@ -761,10 +771,12 @@ init = (config) ->
   window.addEventListener 'keyup', keyup
   svg = SVG('surface')#.size width, height
   for panel in [0...npanels]
-    svgpanel[panel] = svg.group()
-    svgballs[panel] = svgpanel[panel].group()
-    svgarrow[panel] = svgpanel[panel].group()
-    svgaim[panel] = svgpanel[panel].group()
+    svgclip[panel] = svg.defs().rect()
+    svgpanel[panel] = svg.group().clipWith(svgclip[panel])
+    svgtop[panel] = svgpanel[panel].group()
+    svgballs[panel] = svgtop[panel].group()
+    svgarrow[panel] = svgtop[panel].group()
+    svgaim[panel] = svgtop[panel].group()
   sample = ascii2balls '''
     B B B B B       B
      R R 
@@ -818,7 +830,7 @@ init = (config) ->
     WWXWW
     321
     '''
-  board = reduc2balls(someReduction)
+  #board = reduc2balls(someReduction)
   ballseqstr = "BYYYBBBBRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBBBYYYYYYYBBBBBBBRRRRRBBBBBYYYYYYBBBBBBRRRR"
 
   unless loadState()
