@@ -772,8 +772,7 @@ init = (config) ->
     WWXWW
     321
     '''
-  #setBalls reduc2balls(someReduction)
-  setBalls board
+  board = reduc2balls(someReduction)
   ballseqstr = "BYYYBBBBRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBBBYYYYYYYBBBBBBBRRRRRBBBBBYYYYYYBBBBBBRRRR"
 
   unless loadState()
