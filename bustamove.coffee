@@ -78,9 +78,11 @@ arrow_stroke =
   width: 0.4
 arrow_length = 2
 
+shotOrigin = () ->
+  [xm // 2, ym * sqrt3]
+
 drawArrow = (angle) ->
-  x = xm // 2
-  y = ym * sqrt3
+  [x, y] = shotOrigin()
   svgarrow.clear()
   svgarrow.line(x, y, x + arrow_length * Math.cos(angle), y - arrow_length * Math.sin(angle)).stroke(arrow_stroke)
 
@@ -139,8 +141,7 @@ findCollision = (p, p2, angle) ->
   #  [tminx,tminy]
 
 ballTrajectory = (angle) ->
-  x = xm // 2
-  y = ym * sqrt3
+  [x, y] = shotOrigin()
   lst = []
   while y > 0
     lst.push [x,y]
@@ -239,7 +240,8 @@ drawTrajectory = (angle) ->
 newBall = () ->
   if ballseq.length == 0
     ballseq.push 'P'
-  svgshoot = makeCircle xm // 2, ym, ballseq[ballseq.length-1]
+  [x, y] = shotOrigin()
+  svgshoot = makeCircle x, Math.round(y / sqrt3), ballseq[ballseq.length-1]
 
 shootBall = (angle) ->
   return if svgshoot == null
