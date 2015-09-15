@@ -44,7 +44,13 @@ radius = 1
 margin = 0.2
 sqrt3 = Math.sqrt(3)
 
-svg = svgfull = svgballs = svgarrow = svgaim = svgshoot = null
+npanels = 3
+svg = null
+svgpanel = (null for i in [0...npanels])
+svgballs = (null for i in [0...npanels])
+svgarrow = (null for i in [0...npanels])
+svgaim = (null for i in [0...npanels])
+svgshoot = (null for i in [0...npanels])
 balls = rowCount = null
 xm = ym = null  ## center x/y coords are between 0 and xm/ym
 xmin = xmax = ymin = ymax = null
@@ -174,9 +180,15 @@ setState = (state) ->
 loadState = () ->
   setState window.location.hash
 
-draw = () ->
-  svg.viewbox xmin - margin, ymin - margin, xmax + margin + 1.1, ymax + margin + 1.1
+setViewbox = () ->
+  width = xmax + margin + - (xmin - margin)
+  svg.viewbox xmin - margin, ymin - margin, xmax + margin + 1.1 + (activePanels-1)*width, ymax + margin + 1.1
   ## xxx why +1.1?
+  for panel in [0...npanels]
+    svgpanel[panel].translate panel * width, 0
+
+draw = () ->
+  setViewbox()
   drawBalls()
   drawArrow keyangle
   #drawTrajectory keyangle
@@ -185,13 +197,16 @@ draw = () ->
 
 makeCircle = (x, y, color) ->
   #circles[[x,y]] = svgballs.circle(2*radius).center(x, y * sqrt3).stroke(stroke).fill(colors[color])
-  circles[[x,y]] = svgballs.image("img/ball_#{colors[color]}.png",2*radius,2*radius).center(x, y * sqrt3)
-    .style('image-rendering', 'pixelated')
+  circles[[x,y]] =
+    for panel in [0...npanels]
+      svgballs[panel].image("img/ball_#{colors[color]}.png",2*radius,2*radius).center(x, y * sqrt3)
+        .style('image-rendering', 'pixelated')
 
 circles = {}
 drawBalls = () ->
-  svgballs.clear()
-  svgballs.rect(xmax-xmin, ymax-ymin).move(xmin, ymin).fill(border_fill).stroke(border_stroke)
+  for panel in [0...npanels]
+    svgballs[panel].clear()
+    svgballs[panel].rect(xmax-xmin, ymax-ymin).move(xmin, ymin).fill(border_fill).stroke(border_stroke)
   for row, y in balls
     for char, x in row
       if colors[char]?
@@ -208,8 +223,9 @@ shotOrigin = () ->
 
 drawArrow = (angle) ->
   [x, y] = shotOrigin()
-  svgarrow.clear()
-  svgarrow.line(x, y, x + arrow_length * Math.cos(angle), y - arrow_length * Math.sin(angle)).stroke(arrow_stroke)
+  for panel in [0...npanels]
+    svgarrow[panel].clear()
+    svgarrow[panel].line(x, y, x + arrow_length * Math.cos(angle), y - arrow_length * Math.sin(angle)).stroke(arrow_stroke)
 
 #collides = (p, angle, q) ->
 #  Math.abs((q[0] - p[0])*Math.sin(angle) + (q[1]-p[1])*Math.cos(angle)) <= 2*radius
@@ -352,15 +368,17 @@ trajectory_stroke =
   dasharray: [0.1, 0.1]
 
 drawTrajectory = (angle) ->
-  svgaim.clear()
+  for panel in [0...npanels]
+    svgaim[panel].clear()
   return if svgshoot == null
   [bt, collide] = ballTrajectory(angle)
   last = bt[-1..-1][0]
-  svgaim.polyline(bt).fill('none').stroke(trajectory_stroke)
-  svgaim.circle(2*radius).center(last[0], last[1]).stroke(trajectory_stroke).fill(border_fill)
-  ## Black dots:
-  #if collide?
-  #  svgaim.circle(radius/2).center(collide[0], collide[1]).stroke(stroke).fill('black')
+  for panel in [0...npanels]
+    svgaim[panel].polyline(bt).fill('none').stroke(trajectory_stroke)
+    svgaim[panel].circle(2*radius).center(last[0], last[1]).stroke(trajectory_stroke).fill(border_fill)
+    ## Black dots:
+    #if collide?
+    #  svgaim[panel].circle(radius/2).center(collide[0], collide[1]).stroke(stroke).fill('black')
 
 newBall = () ->
   if ballseq.length == 0
@@ -368,10 +386,10 @@ newBall = () ->
   [x, y] = shotOrigin()
   svgshoot = makeCircle x, Math.round(y / sqrt3), ballseq[ballseq.length-1]
 
-scaleTransform = (ball, amount=2) ->
+scaleTransform = (circle, ball, amount=2) ->
   [x,y] = ball
   y *= sqrt3
-  (t) -> circles[ball].attr 'transform', "translate(#{x} #{y}) scale(#{1+(amount-1)*t}) translate(#{-x} #{-y})"
+  (t) -> circle.attr 'transform', "translate(#{x} #{y}) scale(#{1+(amount-1)*t}) translate(#{-x} #{-y})"
 
 shootBall = (angle) ->
   return if svgshoot == null
@@ -392,16 +410,18 @@ shootBall = (angle) ->
     a = null
     for ball in cc
       # .radius(2) isn't working :-(  So using custom scaleTransform instead.
-      a = circles[ball].animate(750).opacity(0)
-        .during scaleTransform ball, 2
-        .after(circles[ball].remove)
+      for circle in circles[ball]
+        a = circle.animate(750).opacity(0)
+          .during scaleTransform circle, ball, 2
+          .after circle.remove
       setBall ball[0], ball[1], blank
     delay = (500 * (2 - ball[0] / xm - ball[1] / ym) for ball in fall)
     mindelay = Math.min delay...
     delay = (d - mindelay for d in delay)
     for ball, i in fall
-      a = circles[ball].animate(750,'<',delay[i]).opacity(0.5).center(ball[0], ball[1] + (ym+1)*sqrt3)
-        .after(circles[ball].remove)
+      for circle in circles[ball]
+        a = circle.animate(750,'<',delay[i]).opacity(0.5).center(ball[0], ball[1] + (ym+1)*sqrt3)
+          .after circle.remove
       setBall ball[0], ball[1], blank
     later = () ->
       newBall()
@@ -409,23 +429,26 @@ shootBall = (angle) ->
     if a == null
       later()
     else
-      a.after () -> circles[ball].remove(); later()
+      a.after () -> circle.remove(); later()
     pushState()
   i = 0
   shoot = ->
     i += 1
     if i < bt.length
-      localshoot.animate(1000*distance(bt[i-1],bt[i])/(ymax-ymin),'-').center(bt[i][0], bt[i][1]).after(shoot)
+      for circle in localshoot
+        circle.animate(1000*distance(bt[i-1],bt[i])/(ymax-ymin),'-').center(bt[i][0], bt[i][1]).after(shoot)
     else if collide?
       rot = Math.acos((bt[i-1][0]-collide[0])/2)
       rot2 = Math.round(rot*3/Math.PI)*Math.PI/3
-      localshoot.animate(50,'-').during (t) ->
-        angle = rot + (rot2-rot)*t
-        localshoot.center(collide[0]+2*Math.cos(angle), collide[1]+2*Math.sin(angle))
-      .after explode
+      for circle, i in localshoot
+        a = circle.animate(50,'-').during (t) ->
+          angle = rot + (rot2-rot)*t
+          @center(collide[0]+2*Math.cos(angle), collide[1]+2*Math.sin(angle))
+      a.after explode
     else
-      localshoot.animate(50,'-').center(Math.round(bt[i-1][0]/2)*2,bt[i-1][1])
-        .after explode
+      for circle, i in localshoot
+        a = circle.animate(50,'-').center(Math.round(bt[i-1][0]/2)*2,bt[i-1][1])
+      a.after explode
   shoot()
 
 neighbors = (x,y) ->
@@ -477,6 +500,13 @@ impact = (added) ->
   else
     [[], []]
 
+activePanels = 1
+toggleActivePanels = () ->
+  activePanels += 1
+  if activePanels > npanels
+    activePanels = 1
+  setViewbox()
+
 keytimer = null
 keycurrent = null
 keyangle = 0.5*Math.PI
@@ -502,6 +532,7 @@ keymove = (dir, slow) ->
     , keyinterval
 
 keydown = (event) ->
+  #console.log event
   if event.keyIdentifier == keycurrent
     return false
   else
@@ -510,8 +541,10 @@ keydown = (event) ->
     keymove +1, event.shiftKey
   else if event.keyIdentifier == 'Right'
     keymove -1, event.shiftKey
-  else if event.keyIdentifier == 'U+0020'
+  else if event.keyIdentifier == 'U+0020'  ## Space
     shootBall keyangle
+  else if event.keyIdentifier == 'U+005A'  ## z
+    toggleActivePanels()
   false
 
 keyup = (event) ->
@@ -723,12 +756,11 @@ init = (config) ->
   window.addEventListener 'keydown', keydown
   window.addEventListener 'keyup', keyup
   svg = SVG('surface')#.size width, height
-  svgfull = svg.group()
-  svgballs = svgfull.group()
-  svgarrow = svgfull.group()
-  svgaim = svgfull.group()
-  #svgzoom1 = svg.use(svgfull).move(50,0)
-  #svgshoot = svg.group()
+  for panel in [0...npanels]
+    svgpanel[panel] = svg.group()
+    svgballs[panel] = svgpanel[panel].group()
+    svgarrow[panel] = svgpanel[panel].group()
+    svgaim[panel] = svgpanel[panel].group()
   sample = ascii2balls '''
     B B B B B       B
      R R 
