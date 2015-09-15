@@ -246,21 +246,21 @@ findCollision = (p, p2, angle) ->
   return null unless yfloor >= 0 and rowCount[yfloor] > 0
   xleft = xright = p[0]
   tmin = tminx = tminy = null
-  for y in [Math.ceil(p[1]/sqrt3)..Math.floor(p2[1]/sqrt3)]
-    xleft -= 1 while collisionTime(p, angle, [xleft-1, y*sqrt3])?
-    xleft += 1 until collisionTime(p, angle, [xleft, y*sqrt3])?
-    xright += 1 while collisionTime(p, angle, [xright+1,y*sqrt3])?
-    xright -= 1 until collisionTime(p, angle, [xright,y*sqrt3])?
+  for y in [Math.ceil(p[1]/sqrt3)..Math.max(0,Math.floor(p2[1]/sqrt3)-1)]
+    xleft -= 1 while xleft > 0 and collisionTime(p, angle, [xleft-1, y*sqrt3])?
+    xleft += 1 until xleft >= xm or collisionTime(p, angle, [xleft, y*sqrt3])?
+    xright += 1 while xright < xm and collisionTime(p, angle, [xright+1,y*sqrt3])?
+    xright -= 1 until xright <= 0 or collisionTime(p, angle, [xright,y*sqrt3])?
     for x in [xleft..xright]
       if isBall x, y
         t = collisionTime p, angle, [x,y*sqrt3]
-        if t != null and (tmin == null or t < tmin)
+        if t != null and t >=0 and (tmin == null or t < tmin)
           tmin = t
           tminx = x
           tminy = y * sqrt3
         if t? and (y+2)*sqrt3 < tminy
           break
-  if tmin == null
+  if tmin == null or (p[0] + tmin*Math.cos(angle)) < xmin+1 or (p[0] + tmin*Math.cos(angle)) > xmax-1
     null
   else
     [tminx,tminy]
