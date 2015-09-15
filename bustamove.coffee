@@ -25,7 +25,9 @@ glueballs = (b1, brest...) ->
   balls
 
 repeatballs = (b, k) ->
-  if k == 1
+  if k == 0
+    ('' for r in b)
+  else if k == 1
     b
   else
     glueballs(b,repeatballs(b, k-1))
@@ -666,6 +668,49 @@ nosetGadget = ascii2balls whitesp
 
 blankGadget = ascii2balls whitesp
 
+reduc2balls = (reduc) ->
+  red = reduc.split '\n'
+  rowtype = (row) ->
+    return 'O' if 'O' in row
+    return 'X' if 'X' in row
+    return 'A' if 'A' in row
+    return null
+  typeheight =
+    O: 5
+    A: 5
+    X: 11
+  board = []
+  setlayer = ascii2balls ""
+  pluglayer = ascii2balls "\n\n"
+  splitlayer = ascii2balls "\n\n"
+  nplugs = 0
+  console.log 
+  for c in red[red.length-1]
+    console.log parseInt(c)
+    setlayer = glueballs(setlayer, setGadget, repeatballs(nosetGadget,parseInt(c)-1))
+    pluglayer = glueballs(pluglayer, plugGadget, repeatballs(noplugGadget,parseInt(c)-1))
+    if c == "1"
+      splitlayer = glueballs(splitlayer, splitWireGadget)
+    else
+      splitlayer = glueballs(splitlayer, splitLeftGadget, repeatballs(splitMiddleGadget, parseInt(c)-2), splitRightGadget)
+    nplugs += parseInt(c)
+  board = pluglayer.concat setlayer
+  board = splitlayer.concat board
+  board = repeatballs(plugGadget, nplugs).concat board
+  plugpos = [1..nplugs]
+  #for i in [red.length-2..0]
+  #  alayer = 
+  #  for c in red[i]   
+  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  board
+
 init = (config) ->
   window.addEventListener 'keydown', keydown
   window.addEventListener 'keyup', keyup
@@ -716,7 +761,19 @@ init = (config) ->
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = sample
+  someReduction = '''
+    A
+    AA
+    WWOO
+    WXXW
+    WWXWW
+    321
+    '''
+  #setBalls reduc2balls(someReduction)
+  setBalls board
   ballseqstr = "BYYYBBBBRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBBBYYYYYYYBBBBBBBRRRRRBBBBBYYYYYYBBBBBBRRRR"
 
   unless loadState()
