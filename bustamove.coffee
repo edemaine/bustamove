@@ -44,7 +44,7 @@ radius = 1
 margin = 0.2
 sqrt3 = Math.sqrt(3)
 
-svg = svgballs = svgarrow = svgaim = svgshoot = null
+svg = svgfull = svgballs = svgarrow = svgaim = svgshoot = null
 balls = rowCount = null
 xm = ym = null  ## center x/y coords are between 0 and xm/ym
 xmin = xmax = ymin = ymax = null
@@ -368,6 +368,11 @@ newBall = () ->
   [x, y] = shotOrigin()
   svgshoot = makeCircle x, Math.round(y / sqrt3), ballseq[ballseq.length-1]
 
+scaleTransform = (ball, amount=2) ->
+  [x,y] = ball
+  y *= sqrt3
+  (t) -> circles[ball].attr 'transform', "translate(#{x} #{y}) scale(#{1+(amount-1)*t}) translate(#{-x} #{-y})"
+
 shootBall = (angle) ->
   return if svgshoot == null
   [bt, collide] = ballTrajectory(angle)
@@ -386,14 +391,17 @@ shootBall = (angle) ->
     [cc, fall] = impact [x,y]
     a = null
     for ball in cc
-      # xxx .radius(2) isn't working :-(
-      a = circles[ball].animate(750).radius(2).opacity(0).after(circles[ball].remove)
+      # .radius(2) isn't working :-(  So using custom scaleTransform instead.
+      a = circles[ball].animate(750).opacity(0)
+        .during scaleTransform ball, 2
+        .after(circles[ball].remove)
       setBall ball[0], ball[1], blank
     delay = (500 * (2 - ball[0] / xm - ball[1] / ym) for ball in fall)
     mindelay = Math.min delay...
     delay = (d - mindelay for d in delay)
     for ball, i in fall
-      a = circles[ball].animate(750,'<',delay[i]).opacity(0.5).center(ball[0], ball[1] + (ym+1)*sqrt3).after(circles[ball].remove)
+      a = circles[ball].animate(750,'<',delay[i]).opacity(0.5).center(ball[0], ball[1] + (ym+1)*sqrt3)
+        .after(circles[ball].remove)
       setBall ball[0], ball[1], blank
     later = () ->
       newBall()
@@ -401,7 +409,7 @@ shootBall = (angle) ->
     if a == null
       later()
     else
-      a.after later
+      a.after () -> circles[ball].remove(); later()
     pushState()
   i = 0
   shoot = ->
@@ -715,9 +723,11 @@ init = (config) ->
   window.addEventListener 'keydown', keydown
   window.addEventListener 'keyup', keyup
   svg = SVG('surface')#.size width, height
-  svgballs = svg.group()
-  svgarrow = svg.group()
-  svgaim = svg.group()
+  svgfull = svg.group()
+  svgballs = svgfull.group()
+  svgarrow = svgfull.group()
+  svgaim = svgfull.group()
+  #svgzoom1 = svg.use(svgfull).move(50,0)
   #svgshoot = svg.group()
   sample = ascii2balls '''
     B B B B B       B
