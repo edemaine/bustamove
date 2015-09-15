@@ -630,7 +630,7 @@ window?.onload = () ->
   resize = ->
     surface = document.getElementById('surface')
     surface.style.height =
-      Math.floor(window.innerHeight - surface.getBoundingClientRect().top - 50) + 'px'
+      Math.floor(window.innerHeight - surface.getBoundingClientRect().top - 10) + 'px'
   window.addEventListener 'resize', resize
   resize()
 
