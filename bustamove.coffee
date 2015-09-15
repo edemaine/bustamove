@@ -59,15 +59,18 @@ draw = () ->
   drawArrow keyangle
   drawTrajectory keyangle
 
+makeCircle = (x, y, color) ->
+  #circles[[x,y]] = svgballs.circle(2*radius).center(x, y * sqrt3).stroke(stroke).fill(colors[color])
+  circles[[x,y]] = svgballs.image("img/ball_#{colors[color]}.png",2*radius,2*radius).center(x, y * sqrt3)
+
 circles = {}
 drawBalls = () ->
   svgballs.clear()
   svgballs.rect(xmax-xmin, ymax-ymin).move(xmin, ymin).fill(border_fill).stroke(border_stroke)
   for row, y in balls
     for char, x in row
-      color = colors[char]
-      if color != null
-        circles[[x,y]] = svgballs.circle(2*radius).center(x, y * sqrt3).stroke(stroke).fill(color)
+      if colors[char]?
+        makeCircle x, y, char
 
 arrow_stroke =
   color: 'black'
@@ -234,7 +237,7 @@ drawTrajectory = (angle) ->
 newBall = () ->
   if ballseq.length == 0
     ballseq.push 'P'
-  svgshoot = svgballs.circle(2*radius).center(xm / 2, ym * sqrt3).stroke(stroke).fill(colors[ballseq[ballseq.length-1]])
+  svgshoot = makeCircle xm / 2, ym, ballseq[ballseq.length-1]
 
 shootBall = (angle) ->
   return if svgshoot == null
