@@ -175,7 +175,7 @@ loadState = () ->
   setState window.location.hash
 
 draw = () ->
-  svg.viewbox xmin - margin, ymin - margin, xmax + margin, ymax + margin + 1.1
+  svg.viewbox xmin - margin, ymin - margin, xmax + margin + 1.1, ymax + margin + 1.1
   ## xxx why +1.1?
   drawBalls()
   drawArrow keyangle
