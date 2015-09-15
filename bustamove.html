@@ -8,20 +8,25 @@
     <SCRIPT TYPE="text/javascript" src="svg.min.js"></SCRIPT>
     <SCRIPT TYPE="text/javascript" src="bustamove.js"></SCRIPT>
     <STYLE TYPE="text/css">
+      BODY { margin: 0px; background: black; }
+      H1, H2 { margin: 0px; }
+      #header { background: black; color: white; padding: 0ex 1em; }
+      #header :link { background: black; color: yellow; text-decoration: none; }
+      #header TD { vertical-align: text-bottom; }
+      /*#header TD { vertical-align: middle; }*/
       #warnings { background: red; color: yellow; padding: 1ex; display: none; }
       @media print {
         .noprint { display: none; }
-        #conveyer { width: 100%; }
       }
     </STYLE>
     <!--#include virtual="../analytics.html"-->
   </HEAD>
   <BODY>
-    <TABLE WIDTH="100%">
+    <TABLE WIDTH="100%" ID="header">
       <TR>
-        <TD STYLE="text-align: left; vertical-align: middle;">
+        <TD STYLE="text-align: left;">
           <H1><A HREF="./">Bust-a-Move</A></H1>
-        <TD STYLE="text-align: right; vertical-align: middle;">
+        <TD STYLE="text-align: right;">
           <H2>by <A HREF="http://erikdemaine.org/">Erik Demaine</A> and <A HREF="http://ulb.ac.be/di/algo/sl/">Stefan Langerman</A>, 2015</H2>
     </TABLE>
 
