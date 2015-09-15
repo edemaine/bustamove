@@ -71,6 +71,12 @@ setBall = (x, y, color) ->
 getBall = (x, y) -> balls[y][x]
 isBall = (x, y) -> colors[balls[y][x]]?
 
+#pushState = () ->
+#  lines = []
+#  for row, y in balls
+#    for char, x in row
+#      s 
+
 draw = () ->
   svg.viewbox xmin - margin, ymin - margin, xmax + margin, ymax + margin + 1.1
   ## xxx why +1.1?
@@ -98,7 +104,8 @@ arrow_stroke =
 arrow_length = 2
 
 shotOrigin = () ->
-  [xm // 2, ym * sqrt3]
+  parity = (ym // 2) % 2    ## xxx why // 2??
+  [(xm+1) // 2 + parity, ym * sqrt3]
 
 drawArrow = (angle) ->
   [x, y] = shotOrigin()
@@ -683,8 +690,13 @@ window?.onload = () ->
   resize = ->
     surface = document.getElementById('surface')
     surface.style.height =
-      Math.floor(window.innerHeight - surface.getBoundingClientRect().top - 50) + 'px'
+      Math.floor(window.innerHeight - surface.getBoundingClientRect().top - 10) + 'px'
   window.addEventListener 'resize', resize
   resize()
+
+  #if getParameterByName 'config'
+  #  init getParameterByName 'config'
+  #else
+  #  init()
 
   test()
