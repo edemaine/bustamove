@@ -62,6 +62,7 @@ draw = () ->
 makeCircle = (x, y, color) ->
   #circles[[x,y]] = svgballs.circle(2*radius).center(x, y * sqrt3).stroke(stroke).fill(colors[color])
   circles[[x,y]] = svgballs.image("img/ball_#{colors[color]}.png",2*radius,2*radius).center(x, y * sqrt3)
+    .style("image-rendering:optimizeSpeed")
 
 circles = {}
 drawBalls = () ->
@@ -138,7 +139,7 @@ findCollision = (p, p2, angle) ->
   #  [tminx,tminy]
 
 ballTrajectory = (angle) ->
-  x = xm / 2
+  x = xm // 2
   y = ym * sqrt3
   lst = []
   while y > 0
