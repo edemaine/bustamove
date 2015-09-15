@@ -25,7 +25,8 @@ glueballs = (b1, brest...) ->
   balls
 
 repeatballs = (b, k) ->
-  if k == 0
+  if k <= 0
+    console.log "repeat"+k
     ('' for r in b)
   else if k == 1
     b
@@ -584,6 +585,14 @@ andMid3Gadget = ascii2balls """
    B B B
   """
 
+andMid1Gadget = ascii2balls """
+    
+    
+   R
+  B 
+   B
+  """
+
 andMid4Gadget = ascii2balls """
           
           
@@ -636,6 +645,21 @@ orMiddleGadget = ascii2balls """
    B B B B B B B
   """
 
+orMiddle1Gadget = ascii2balls """
+    
+  B 
+   R
+  B 
+   B
+  """
+
+noor1Gadget = ascii2balls """
+   B
+  B 
+   B
+  B 
+   B
+  """
 orRightGadget = ascii2balls """
            R B B
   B B B   R B B 
@@ -717,6 +741,11 @@ noplugGadget = ascii2balls '''
    B B B B B B B
   R R R R R R R '''
 
+noplug1Gadget = ascii2balls '''
+  B 
+   B
+  R '''
+
 whitesp = "              \n"
 setLine = "     B B      \n"
 setGadget = ascii2balls setLine
@@ -752,10 +781,74 @@ reduc2balls = (reduc) ->
   board = pluglayer.concat setlayer
   board = splitlayer.concat board
   board = repeatballs(plugGadget, nplugs).concat board
-  plugpos = [1..nplugs]
-  #for i in [red.length-2..0]
-  #  alayer = 
-  #  for c in red[i]   
+  plugpos = (7*i-3 for i in [1..nplugs])
+  for i in [red.length-2..0]
+    if 'X' in red[i]
+      alayer = repeatballs(xoverGadget, 0)
+      for c in red[i]
+        if c == 'X'
+          alayer = glueballs(alayer, xoverGadget)
+        if c == 'W'
+          alayer = glueballs(alayer, xoverWireGadget)
+      board = alayer.concat board
+      board = repeatballs(plugGadget, nplugs).concat board
+    if 'O' in red[i]
+      alayer = repeatballs(orLeftGadget, 0)
+      curplug = 0
+      curcol = 1
+      newplugpos = []
+      for c in red[i]
+        if c == 'W'
+          alayer = glueballs(alayer, repeatballs(noor1Gadget, plugpos[curplug] - curcol - 3), orWireGadget)
+          curcol = plugpos[curplug]+4
+          newplugpos.push plugpos[curplug]
+          curplug += 1
+        if c == 'O'
+          alayer = glueballs(alayer, repeatballs(noor1Gadget, plugpos[curplug] - curcol - 3), orLeftGadget)
+          alayer = glueballs(alayer, repeatballs(orMiddle1Gadget, plugpos[curplug+1] - plugpos[curplug] - 7), orRightGadget)
+          curcol = plugpos[curplug+1]+4
+          newplugpos.push plugpos[curplug]+3
+          curplug += 2
+      alayer = glueballs(alayer, repeatballs(noor1Gadget, 7*nplugs-curcol+1))
+      board = alayer.concat board
+      plugpos = newplugpos
+      pluglayer = ascii2balls "\n\n"
+      curcol = 1
+      for pos in plugpos
+        console.log "plugpos" + [pos, pos-curcol-3]
+        pluglayer = glueballs(pluglayer, repeatballs(noplug1Gadget, pos-curcol-3), plugGadget)
+        curcol = pos+4
+      pluglayer = glueballs(pluglayer, repeatballs(noplug1Gadget, 7*nplugs-curcol+1))      
+      board = pluglayer.concat board
+    if 'A' in red[i]
+      alayer = repeatballs(andLeftGadget, 0)
+      curplug = 0
+      curcol = 1
+      newplugpos = []
+      for c in red[i]
+        if c == 'W'
+          alayer = glueballs(alayer, repeatballs(noor1Gadget, plugpos[curplug] - curcol - 3), andWireGadget)
+          curcol = plugpos[curplug]+4
+          newplugpos.push plugpos[curplug]
+          curplug += 1
+        if c == 'A'
+          console.log "A "+[plugpos[curplug], plugpos[curplug+1], curcol]
+          alayer = glueballs(alayer, repeatballs(noor1Gadget, plugpos[curplug] - curcol - 3), andLeftGadget)
+          alayer = glueballs(alayer, repeatballs(andMid1Gadget, plugpos[curplug+1] - plugpos[curplug] - 7), andRightGadget)
+          curcol = plugpos[curplug+1]+4
+          newplugpos.push plugpos[curplug]+3
+          curplug += 2
+      alayer = glueballs(alayer, repeatballs(noor1Gadget, 7*nplugs-curcol+1))
+      board = alayer.concat board
+      plugpos = newplugpos
+      pluglayer = ascii2balls "\n\n"
+      curcol = 1
+      for pos in plugpos
+        console.log "plugpos" + [pos, pos-curcol-3]
+        pluglayer = glueballs(pluglayer, repeatballs(noplug1Gadget, pos-curcol-3), plugGadget)
+        curcol = pos+4
+      pluglayer = glueballs(pluglayer, repeatballs(noplug1Gadget, 7*nplugs-curcol+1))      
+      board = pluglayer.concat board
   board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
