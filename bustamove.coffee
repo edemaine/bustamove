@@ -772,17 +772,22 @@ reduc2balls = (reduc) ->
   pluglayer = ascii2balls "\n\n"
   splitlayer = ascii2balls "\n\n"
   nplugs = 0
+  splits = false
   for c in red[red.length-1]
     setlayer = glueballs(setlayer, setGadget, repeatballs(nosetGadget,parseInt(c)-1))
     pluglayer = glueballs(pluglayer, plugGadget, repeatballs(noplugGadget,parseInt(c)-1))
     if c == "1"
       splitlayer = glueballs(splitlayer, splitWireGadget)
     else
+      splits = true
       splitlayer = glueballs(splitlayer, splitLeftGadget, repeatballs(splitMiddleGadget, parseInt(c)-2), splitRightGadget)
     nplugs += parseInt(c)
   board = pluglayer.concat setlayer
-  board = splitlayer.concat board
-  board = repeatballs(plugGadget, nplugs).concat board
+  if splits
+    board = splitlayer.concat board
+    board = repeatballs(plugGadget, nplugs).concat board
+  if red.length <= 1
+    return board
   plugpos = (7*i-3 for i in [1..nplugs])
   for i in [red.length-2..0]
     if 'X' in red[i]
@@ -851,15 +856,48 @@ reduc2balls = (reduc) ->
         curcol = pos+4
       pluglayer = glueballs(pluglayer, repeatballs(noplug1Gadget, 7*nplugs-curcol+1))      
       board = pluglayer.concat board
-  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
-  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
-  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
-  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
-  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
-  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
-  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
-  board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
+  #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   board
+
+expandBalls = (board, m) ->
+  newboard = []
+  k = Math.max(Math.ceil((m-(board[0].length)/2)/2), 0)
+  for row in board
+    if row.length < 2
+      ball = "  "
+    else
+      ball = row[0..1]
+    console.log "ball "+ball + " k "+k
+    newboard.push(ball.repeat(k)+row+ball.repeat(k))
+  for i in [1..Math.floor(2*m/sqrt3)]
+    newboard.push("  ")
+  newboard
+
+exampleBoard = (b) ->
+  if b == 'X'
+    return expandBalls(reduc2balls("X\n11"),5)
+  if b == 'S'
+    return expandBalls(reduc2balls("123"),6)
+  if b == 'O'
+    return expandBalls(reduc2balls("OO\n1111"),6)
+  if b == 'A'
+    return expandBalls(reduc2balls("AA\n1111"),6)
+  if b == 'F'
+    smallReduction = '''
+      A
+      OO
+      WXW
+      211
+      '''
+    return expandBalls(reduc2balls(smallReduction),12)
+
 
 init = (config) ->
   window.addEventListener 'keydown', keydown
@@ -925,11 +963,11 @@ init = (config) ->
     WWXWW
     321
     '''
-  board = reduc2balls(someReduction)
+
   ballseqstr = "BYYYBBBBRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBBBYYYYYYYBBBBBBBRRRRRBBBBBYYYYYYBBBBBBRRRR"
 
   unless loadState()
-    setBalls board
+    setBalls exampleBoard('F')
     ballseq = (ballseqstr[i] for i in [ballseqstr.length-1..0])
     #pushState()
     draw()
