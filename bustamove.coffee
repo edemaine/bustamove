@@ -206,9 +206,9 @@ draw = () ->
   drawTrajectory keyangle
 
 makeCircle = (x, y, color) ->
-  #circles[[x,y]] = svgballs.circle(2*radius).center(x, y * sqrt3).stroke(stroke).fill(colors[color])
   circles[[x,y]] =
     for panel in [0...npanels]
+      #svgballs[panel].circle(2*radius).center(x, y * sqrt3).stroke(stroke).fill(colors[color])
       svgballs[panel].image("img/ball_#{colors[color]}.png",2*radius,2*radius).center(x, y * sqrt3)
         .style('image-rendering', 'pixelated')
 
@@ -923,7 +923,7 @@ init = (config) ->
     WWXWW
     321
     '''
-  #board = reduc2balls(someReduction)
+  board = reduc2balls(someReduction)
   ballseqstr = "BYYYBBBBRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBBBYYYYYYYBBBBBBBRRRRRBBBBBYYYYYYBBBBBBRRRR"
 
   unless loadState()
