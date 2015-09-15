@@ -78,7 +78,7 @@ arrow_stroke =
 arrow_length = 2
 
 drawArrow = (angle) ->
-  x = xm / 2
+  x = xm // 2
   y = ym * sqrt3
   svgarrow.clear()
   svgarrow.line(x, y, x + arrow_length * Math.cos(angle), y - arrow_length * Math.sin(angle)).stroke(arrow_stroke)
@@ -237,7 +237,7 @@ drawTrajectory = (angle) ->
 newBall = () ->
   if ballseq.length == 0
     ballseq.push 'P'
-  svgshoot = makeCircle xm / 2, ym, ballseq[ballseq.length-1]
+  svgshoot = makeCircle xm // 2, ym, ballseq[ballseq.length-1]
 
 shootBall = (angle) ->
   return if svgshoot == null
