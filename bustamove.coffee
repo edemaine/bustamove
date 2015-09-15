@@ -4,6 +4,7 @@ colors =
   R: 'red'
   Y: 'yellow'
   ' ': null
+blank = ' '
 
 ## ASCII
 ##  R R
@@ -54,10 +55,14 @@ setBalls = (newBalls) ->
   rowCount = ((1 for char in row when colors[char]?).length for row in balls)
   ym = balls.length - 1
   xm = (Math.max (row.length for row in balls)...) - 1
+  for row in balls
+    while row.length < xm
+      row.push blank
   ymin = -1 * radius
   ymax = (1 + ym * sqrt3) * radius
   xmin = -1 * radius
   xmax = (1 + xm) * radius
+  null
 
 setBall = (x, y, color) ->
   if colors[balls[y][x]]?
@@ -69,17 +74,111 @@ setBall = (x, y, color) ->
 getBall = (x, y) -> balls[y][x]
 isBall = (x, y) -> colors[balls[y][x]]?
 
-#pushState = () ->
-#  lines = []
-#  for row, y in balls
-#    for char, x in row
-#      s 
+getState = () ->
+  commands = []
+  current = null
+  flush = () ->
+    if current == blank
+      current = '.'
+    if count > 1
+      commands.push "#{count}#{current}"
+    else if count >= 1
+      commands.push current
+  for row, y in balls
+    current = null
+    count = 0
+    parity = y % 2
+    for char, x in row[parity..]
+      continue unless x % 2 == 0
+      if current != char
+        flush()
+        current = char
+        count = 1
+      else
+        count += 1
+    flush()
+    ## Remove trailing blanks.
+    if commands.length > 0 and commands[commands.length-1][-1..] == '.'
+      commands.pop()
+    commands.push '|'
+  ## remove last |
+  config = commands[...-1].join ''
+
+  commands = []
+  current = null
+  count = 0
+  for char in ballseq
+    if current != char
+      flush()
+      current = char
+      count = 1
+    else
+      count += 1
+  flush()
+  seq = commands.join ''
+
+  "#config=#{config}&seq=#{seq}"
+
+currentState = null
+
+pushState = () ->
+  #history.pushState null, 'play', "#config=#{getState()}"
+  window.location.hash = currentState = getState()
+  #console.log getState()
+
+## Based on jolly.exe's code from http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+getParameterByName = (hash, name) ->
+  hash = '#' + hash
+  name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]")
+  regex = new RegExp "[#&]" + name + "=([^&#]*)"
+  results = regex.exec hash
+  if results == null
+    null
+  else
+    decodeURIComponent results[1].replace(/\+/g, " ")
+
+decompress = (compress, fill = '') ->
+  return compress unless compress?
+  out = ''
+  count = ''
+  for char in compress
+    if '0' <= char <= '9'
+      count += char
+    else
+      if char == '.'
+        char = blank
+      count = 1 if count == ''
+      out += (char + fill).repeat count
+      count = ''
+  out
+
+setState = (state) ->
+  return if state == currentState
+  seq = decompress getParameterByName state, 'seq'
+  config = getParameterByName state, 'config'
+  return false unless seq? and config?
+  ballseq = (x for x in seq)
+  rows =
+    for row, y in config.split '|'
+      row = (if y % 2 == 0 then '' else ' ') + decompress row, ' '
+      while row[-1..] == ' '
+        row = row[...-1]
+      row
+  currentState = state
+  setBalls rows
+  draw()
+  true
+
+loadState = () ->
+  setState window.location.hash
 
 draw = () ->
   svg.viewbox xmin - margin, ymin - margin, xmax + margin, ymax + margin + 1.1
   ## xxx why +1.1?
   drawBalls()
   drawArrow keyangle
+  #drawTrajectory keyangle
+  newBall()
   drawTrajectory keyangle
 
 makeCircle = (x, y, color) ->
@@ -280,19 +379,20 @@ shootBall = (angle) ->
   circles[[x,y]] = localshoot = svgshoot
   svgshoot = null
   drawTrajectory keyangle
+
   explode = ->
     [cc, fall] = impact [x,y]
     a = null
     for ball in cc
       # xxx .radius(2) isn't working :-(
       a = circles[ball].animate(750).radius(2).opacity(0).after(circles[ball].remove)
-      setBall ball[0], ball[1], ' '
+      setBall ball[0], ball[1], blank
     delay = (500 * (2 - ball[0] / xm - ball[1] / ym) for ball in fall)
     mindelay = Math.min delay...
     delay = (d - mindelay for d in delay)
     for ball, i in fall
       a = circles[ball].animate(750,'<',delay[i]).opacity(0.5).center(ball[0], ball[1] + (ym+1)*sqrt3).after(circles[ball].remove)
-      setBall ball[0], ball[1], ' '
+      setBall ball[0], ball[1], blank
     later = () ->
       newBall()
       drawTrajectory keyangle
@@ -300,6 +400,7 @@ shootBall = (angle) ->
       later()
     else
       a.after later
+    pushState()
   i = 0
   shoot = ->
     i += 1
@@ -565,7 +666,7 @@ nosetGadget = ascii2balls whitesp
 
 blankGadget = ascii2balls whitesp
 
-test = () ->
+init = (config) ->
   window.addEventListener 'keydown', keydown
   window.addEventListener 'keyup', keyup
   svg = SVG('surface')#.size width, height
@@ -615,23 +716,14 @@ test = () ->
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
-  setBalls board
-  #setBalls sample
+  #board = sample
   ballseqstr = "BYYYBBBBRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBBBYYYYYYYBBBBBBBRRRRRBBBBBYYYYYYBBBBBBRRRR"
-  ballseq = (ballseqstr[i] for i in [ballseqstr.length-1..0])
-  draw()
-  newBall()
-  drawTrajectory keyangle
 
-## Based on jolly.exe's code from http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
-getParameterByName = (name) ->
-  name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]")
-  regex = new RegExp "[\\?&]" + name + "=([^&#]*)"
-  results = regex.exec location.search
-  if results == null
-    null
-  else
-    decodeURIComponent results[1].replace(/\+/g, " ")
+  unless loadState()
+    setBalls board
+    ballseq = (ballseqstr[i] for i in [ballseqstr.length-1..0])
+    #pushState()
+    draw()
 
 window?.onload = () ->
   resize = ->
@@ -640,10 +732,7 @@ window?.onload = () ->
       Math.floor(window.innerHeight - surface.getBoundingClientRect().top - 10) + 'px'
   window.addEventListener 'resize', resize
   resize()
+  #window.addEventListener 'hashchange', loadState
+  window.addEventListener 'popstate', loadState
 
-  #if getParameterByName 'config'
-  #  init getParameterByName 'config'
-  #else
-  #  init()
-
-  test()
+  init()
