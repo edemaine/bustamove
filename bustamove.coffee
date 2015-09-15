@@ -62,7 +62,7 @@ draw = () ->
 makeCircle = (x, y, color) ->
   #circles[[x,y]] = svgballs.circle(2*radius).center(x, y * sqrt3).stroke(stroke).fill(colors[color])
   circles[[x,y]] = svgballs.image("img/ball_#{colors[color]}.png",2*radius,2*radius).center(x, y * sqrt3)
-    .style("image-rendering:optimizeSpeed")
+    .style('image-rendering', 'pixelated')
 
 circles = {}
 drawBalls = () ->
