@@ -232,8 +232,9 @@ drawTrajectory = (angle) ->
   last = bt[-1..-1][0]
   svgaim.polyline(bt).fill('none').stroke(trajectory_stroke)
   svgaim.circle(2*radius).center(last[0], last[1]).stroke(trajectory_stroke).fill(border_fill)
-  if collide?
-    svgaim.circle(radius/2).center(collide[0], collide[1]).stroke(stroke).fill('black')
+  ## Black dots:
+  #if collide?
+  #  svgaim.circle(radius/2).center(collide[0], collide[1]).stroke(stroke).fill('black')
 
 newBall = () ->
   if ballseq.length == 0
