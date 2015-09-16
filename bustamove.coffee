@@ -46,6 +46,7 @@ margin = 0.2
 sqrt3 = Math.sqrt(3)
 
 npanels = 3
+bigscale = 30
 svg = null
 svgpanel = (null for i in [0...npanels])
 svgclip = (null for i in [0...npanels])
@@ -402,7 +403,6 @@ drawTrajectory = (angle) ->
     ## Black dots:
     #if collide?
     #  svgaim[panel].circle(radius/2).center(collide[0], collide[1]).stroke(stroke).fill('black')
-  bigscale = 3
   svgtop[1].attr 'transform', "scale(#{bigscale}) translate(#{-last[0]+svgwidth/2/bigscale} #{-firstOccupiedRow()*sqrt3+svgheight*(3/4)/bigscale})"
 
 newBall = () ->
@@ -552,7 +552,7 @@ keymove = (dir, slow) ->
   if dir != 0
     keytimer = setInterval () ->
       if slow
-        keyangle += dir * keyspeedslow
+        keyangle += dir * if activePanels > 1 then keyspeed / bigscale else keyspeedslow
       else
         keyangle += dir * keyspeed
       keyangle = keymin if keyangle < keymin
@@ -875,7 +875,8 @@ reduc2balls = (reduc) ->
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
-  board
+  yellowlayer = repeatballs(ascii2balls("Y \n Y"), 7*nplugs)
+  yellowlayer.concat board
 
 expandBalls = (board, m, fake = false) ->
   newboard = []
@@ -893,13 +894,29 @@ expandBalls = (board, m, fake = false) ->
 
 exampleBoard = (b) ->
   if b == 'X'
-    return expandBalls(reduc2balls("X\n11"),5)
+    return {
+      board: expandBalls(reduc2balls("X\n11"),5)
+      transf: () -> ""
+      seq: "BYYYYBBBRRRR"  
+    }
   else if b == 'S'
-    return expandBalls(reduc2balls("123"),6)
+    return {
+      board: expandBalls(reduc2balls("123"),6)
+      transf: () -> ""
+      seq: "BBYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRRRRRRRRR"  
+    }
   else if b == 'O'
-    return expandBalls(reduc2balls("OO\n1111"),6)
+    return {
+      board: expandBalls(reduc2balls("OO\n1111"),6)
+      transf: () -> ""
+      seq: "BYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRRRRRRRRR"  
+    }
   else if b == 'A'
-    return expandBalls(reduc2balls("AA\n1111"),6)
+    return {
+      board: expandBalls(reduc2balls("AA\n1111"),6)
+      transf: () -> ""
+      seq: "BBBYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRRRRRRRRR"  
+    }
   else if b == 'F'
     smallReduction = '''
       A
@@ -907,7 +924,11 @@ exampleBoard = (b) ->
       WXW
       211
       '''
-    return expandBalls(reduc2balls(smallReduction),12)
+    return {
+      board: expandBalls(reduc2balls(smallReduction),12)
+      transf: () -> ""
+      seq: "BBYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRR"  
+    }
   else if b == 'G'
     someReduction = '''
       A
@@ -917,8 +938,12 @@ exampleBoard = (b) ->
       WWXWW
       321
       '''
-    return reduc2balls(someReduction)
-  else if b == 'B'
+    return {
+      board: reduc2balls(someReduction)
+      transf: () -> ""
+      seq: "BBYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRR"  
+    }      
+  else if b == 'Big'
     someReduction = '''
       A
       AA
@@ -927,8 +952,25 @@ exampleBoard = (b) ->
       WWXWW
       321
       '''
-    return expandBalls(reduc2balls(someReduction),500,true)
-
+    return {
+      board: expandBalls(reduc2balls(someReduction),500,true)
+      transf: () -> "translate(#{xm/2} 0) scale(10) translate(#{-xm/2} 0)"
+      seq: "BBYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRR"  
+    }
+  else if b == 'Unscaled'
+    someReduction = '''
+      A
+      AA
+      WWOO
+      WXXW
+      WWXWW
+      321
+      '''
+    return {
+      board: expandBalls(reduc2balls(someReduction),50)
+      transf: () -> ""
+      seq: "BBYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRR"  
+    }
 
 init = (config) ->
   window.addEventListener 'keydown', keydown
@@ -989,9 +1031,11 @@ init = (config) ->
   #board = sample
 
   ballseqstr = "BYYYBBBBRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBYYYYYYBBBBBBBBRRRRRRBBBBBBBBBYYYYYYYBBBBBBBRRRRRBBBBBYYYYYYBBBBBBRRRR"
-
   unless loadState()
-    setBalls exampleBoard('B')
+    ex = exampleBoard('Big')
+    setBalls ex.board
+    ballseqstr = ex.seq
+    svgtop[2].attr 'transform', ex.transf()
     ballseq = (ballseqstr[i] for i in [ballseqstr.length-1..0])
     #pushState()
     draw()
