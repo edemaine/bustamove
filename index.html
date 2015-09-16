@@ -1,8 +1,58 @@
-<OL>
-<LI> <A HREF="bustamove.html#example=S">Split</A>
-<LI> <A HREF="bustamove.html#example=O">OR</A>
-<LI> <A HREF="bustamove.html#example=A">AND</A>
-<LI> <A HREF="bustamove.html#example=X">Crossover</A>
-<LI> <A HREF="bustamove.html#example=Big">Big, correct padding, but not enough</A>
-<LI> <A HREF="bustamove.html#example=Unscaled">Big, full padding, but blanks instead of bubbles</A>
-</OL>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<HTML xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
+      xmlns:svg="http://www.w3.org/2000/svg"
+      xmlns:v="urn:schemas-microsoft-com:vml"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+  <HEAD>
+    <TITLE>Bust-a-Move</TITLE>
+    <SCRIPT TYPE="text/javascript" src="svg.min.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" src="bustamove.js"></SCRIPT>
+    <STYLE TYPE="text/css">
+      H1, H2 { margin: 0px; }
+      #header { background: black; color: white; padding: 0ex 1em; }
+      #header :link { background: black; color: yellow; text-decoration: none; }
+      #header :visited { background: black; color: yellow; text-decoration: none; }
+      #header TD { vertical-align: text-bottom; }
+      /*#header TD { vertical-align: middle; }*/
+      #warnings { background: red; color: yellow; padding: 1ex; display: none; }
+      @media print {
+        .noprint { display: none; }
+      }
+    </STYLE>
+    <!--#include virtual="../analytics.html"-->
+  </HEAD>
+  <BODY>
+
+    <TABLE WIDTH="100%" ID="header">
+      <TR>
+        <TD STYLE="text-align: left;">
+          <H1><A HREF="#" ID="selflink">Bust-a-Move</A></H1>
+        <TD STYLE="text-align: right;">
+          <H2>by <A HREF="http://erikdemaine.org/">Erik Demaine</A> and <A HREF="http://ulb.ac.be/di/algo/sl/">Stefan Langerman</A>, 2015</H2>
+    </TABLE>
+
+    <P>
+    <I>An implementation of <A HREF="http://arxiv.org/abs/1506.08409">this paper
+    / NP-hardness proof</A></I>
+
+    <H2>Gadgets</H2>
+    <OL>
+    <LI> <A HREF="bustamove.html#example=S">Split</A>
+    <LI> <A HREF="bustamove.html#example=O">OR</A>
+    <LI> <A HREF="bustamove.html#example=A">AND</A>
+    <LI> <A HREF="bustamove.html#example=X">Crossover</A>
+    <LI> <A HREF="bustamove.html#example=Big">Big, correct padding, but not enough</A>
+    <LI> <A HREF="bustamove.html#example=Unscaled">Big, full padding, but blanks instead of bubbles</A>
+    </OL>
+
+    <H2>Instructions</H2>
+
+    <UL>
+    <LI> Aim with left/right arrow keys.  Hold shift to move slowly.
+    <LI> Shoot with spacebar.
+    <LI> Use A/S/D to aim at 45/90/45 degrees.
+    <LI> Ball sequence is shown at the bottom.
+    <LI> Use Z to toggle more/less zoom views (for larger constructions).
+    </UL>
+  </BODY>
+</HTML>
