@@ -870,7 +870,12 @@ reduc2balls = (reduc) ->
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
-  yellowlayer = repeatballs(ascii2balls("Y \n Y"), 7*nplugs)
+  yellowlayer = ascii2balls "\n"
+  curcol = 1
+  for pos in plugpos
+    yellowlayer = glueballs(yellowlayer, repeatballs(ascii2balls("  \n  "), pos-curcol-4), repeatballs(ascii2balls("Y \n Y"), 6))
+    curcol = pos+2
+  #yellowlayer = repeatballs(ascii2balls("Y \n Y"), 7*nplugs)
   yellowlayer.concat board
 
 expandBalls = (board, m, fake = false) ->
@@ -902,15 +907,15 @@ exampleBoard = (b) ->
     }
   else if b == 'O'
     return {
-      board: expandBalls(glueballs(reduc2balls("O\n11"), ascii2balls("  \n".repeat(13)+"  "), reduc2balls("O\n11")),6)
+      board: expandBalls(reduc2balls("OO\n1111"),6)
       transf: () -> ""
       seq: "BYYYYBBBRRRRRRBBBBBBBBYYYYBBBBRRRRRRRRRRRRRRR"  
     }
   else if b == 'A'
     return {
-      board: expandBalls(glueballs(reduc2balls("O\n11"), ascii2balls("  \n".repeat(13)+"  "), reduc2balls("O\n11")),6)
+      board: expandBalls(reduc2balls("AA\n1111"),6)
       transf: () -> ""
-      seq: "BBBYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRRRRRRRRR"  
+      seq: "BBBYYYYBBBRRRRRBBBBBBBBYYYBBBBRRRRRRRRRRRRRRR"  
     }
   else if b == 'F'
     smallReduction = '''
