@@ -26,7 +26,6 @@ glueballs = (b1, brest...) ->
 
 repeatballs = (b, k) ->
   if k <= 0
-    console.log "repeat"+k
     ('' for r in b)
   else if k == 1
     b
@@ -405,12 +404,17 @@ drawTrajectory = (angle) ->
     #  svgaim[panel].circle(radius/2).center(collide[0], collide[1]).stroke(stroke).fill('black')
   svgtop[1].attr 'transform', "scale(#{bigscale}) translate(#{-last[0]+svgwidth/2/bigscale} #{-firstOccupiedRow()*sqrt3+svgheight*(3/4)/bigscale})"
 
+seqshow = 30
+
 newBall = () ->
+  box = document.getElementById('seq').getBoundingClientRect()
+  seqshow = box.width / box.height
   svgseq.clear()
-  if ballseq.length > 0
-    for i in [ballseq.length-1..0]
-      console.log ballseq[i]
-      circleObject(svgseq, ballseq[i])
+  show = ballseq[ballseq.length-1..0] + 'P'.repeat seqshow
+  for ball, x in show
+    circleObject(svgseq, ball).center 2*x, 0
+  svgseq.viewbox -radius, -radius, 2*x+radius, 2*radius
+
   if ballseq.length == 0
     ballseq.push 'P'
   [x, y] = shotOrigin()
@@ -976,7 +980,7 @@ init = (config) ->
   window.addEventListener 'keydown', keydown
   window.addEventListener 'keyup', keyup
   svg = SVG('surface')#.size width, height
-  svgseq = SVG('surface')
+  svgseq = SVG('seq')
   for panel in [0...npanels]
     svgclip[panel] = svg.defs().rect()
     svgpanel[panel] = svg.group().clipWith(svgclip[panel])
@@ -1044,7 +1048,7 @@ window?.onload = () ->
   resize = ->
     surface = document.getElementById('surface')
     surface.style.height =
-      Math.floor(window.innerHeight - surface.getBoundingClientRect().top - 10) + 'px'
+      Math.floor(window.innerHeight - surface.getBoundingClientRect().top - document.getElementById('seq').getBoundingClientRect().height - 10) + 'px'
   window.addEventListener 'resize', resize
   resize()
   #window.addEventListener 'hashchange', loadState
