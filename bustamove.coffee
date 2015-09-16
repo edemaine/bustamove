@@ -26,7 +26,6 @@ glueballs = (b1, brest...) ->
 
 repeatballs = (b, k) ->
   if k <= 0
-    console.log "repeat"+k
     ('' for r in b)
   else if k == 1
     b
@@ -55,6 +54,7 @@ svgballs = (null for i in [0...npanels])
 svgarrow = (null for i in [0...npanels])
 svgaim = (null for i in [0...npanels])
 svgshoot = (null for i in [0...npanels])
+svgseq = null
 svgwidth = svgheight = null
 balls = rowCount = null
 xm = ym = null  ## center x/y coords are between 0 and xm/ym
@@ -196,10 +196,9 @@ setViewbox = () ->
     svgpanel[panel].style 'display', 'inline'
   for panel in [activePanels...npanels]
     svgpanel[panel].style 'display', 'none'
-  svgwidth = xmax + margin - (xmin - margin) + 1.1
-  svgheight = ymax + margin - (ymin - margin) + 1.1
-  svg.viewbox xmin - margin, ymin - margin, xmax + margin + 1.1 + (activePanels-1)*svgwidth, ymax + margin + 1.1
-  ## xxx why +1.1?
+  svgwidth = xmax + margin - (xmin - margin)
+  svgheight = ymax + margin - (ymin - margin)
+  svg.viewbox xmin - margin, ymin - margin, activePanels * svgwidth, svgheight
   for panel in [0...npanels]
     svgpanel[panel].translate panel * svgwidth, 0
     svgclip[panel].move(xmin - margin, ymin - margin).size(svgwidth, svgheight)
@@ -213,12 +212,15 @@ draw = () ->
   drawTrajectory keyangle
 
 svggroups = null
+
+circleObject = (parent, color) ->
+  #parent.circle(2*radius).stroke(stroke).fill(colors[color])
+  parent.image("img/ball_#{colors[color]}.png",2*radius,2*radius)
+        .style('image-rendering', 'pixelated')
 makeCircle = (x, y, color) ->
   circles[[x,y]] =
     for panel in [0...npanels]
-      #svggroups[panel][y].circle(2*radius).center(x, y * sqrt3).stroke(stroke).fill(colors[color])
-      svggroups[panel][y].image("img/ball_#{colors[color]}.png",2*radius,2*radius).center(x, y * sqrt3)
-        .style('image-rendering', 'pixelated')
+      circleObject(svggroups[panel][y], color).center(x, y * sqrt3)
 
 circles = {}
 drawBalls = () ->
@@ -405,7 +407,20 @@ drawTrajectory = (angle) ->
     #  svgaim[panel].circle(radius/2).center(collide[0], collide[1]).stroke(stroke).fill('black')
   svgtop[1].attr 'transform', "scale(#{bigscale}) translate(#{-last[0]+svgwidth/2/bigscale} #{-firstOccupiedRow()*sqrt3+svgheight*(3/4)/bigscale})"
 
+seqshow = 30
+
+drawSeq = () ->
+  return if svgseq == null
+  box = document.getElementById('seq').getBoundingClientRect()
+  seqshow = box.width / box.height
+  svgseq.clear()
+  show = (x for x in 'P'.repeat seqshow).concat(ballseq).reverse()
+  for ball, x in show[...seqshow]
+    circleObject(svgseq, ball).center 2*x, 0
+  svgseq.viewbox -radius, -radius, 2*x+radius, 2*radius
+
 newBall = () ->
+  drawSeq()
   if ballseq.length == 0
     ballseq.push 'P'
   [x, y] = shotOrigin()
@@ -976,6 +991,7 @@ init = (config) ->
   window.addEventListener 'keydown', keydown
   window.addEventListener 'keyup', keyup
   svg = SVG('surface')#.size width, height
+  svgseq = SVG('seq')
   for panel in [0...npanels]
     svgclip[panel] = svg.defs().rect()
     svgpanel[panel] = svg.group().clipWith(svgclip[panel])
@@ -1043,7 +1059,8 @@ window?.onload = () ->
   resize = ->
     surface = document.getElementById('surface')
     surface.style.height =
-      Math.floor(window.innerHeight - surface.getBoundingClientRect().top - 10) + 'px'
+      Math.floor(window.innerHeight - surface.getBoundingClientRect().top - document.getElementById('seq').getBoundingClientRect().height - 10) + 'px'
+    drawSeq()
   window.addEventListener 'resize', resize
   resize()
   #window.addEventListener 'hashchange', loadState
