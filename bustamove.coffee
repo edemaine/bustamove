@@ -908,7 +908,7 @@ exampleBoard = (b) ->
     }
   else if b == 'A'
     return {
-      board: expandBalls(reduc2balls("AA\n1111"),6)
+      board: expandBalls(glueballs(reduc2balls("O\n11"), ascii2balls("  \n".repeat(13)+"  "), reduc2balls("O\n11")),6)
       transf: () -> ""
       seq: "BBBYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRRRRRRRRR"  
     }
