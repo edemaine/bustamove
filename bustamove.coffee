@@ -168,7 +168,10 @@ decompress = (compress, fill = '') ->
 setState = (state) ->
   return if state == currentState
   if getParameterByName state, 'example'
-    setBalls exampleBoard getParameterByName state, 'example'
+    ex = exampleBoard getParameterByName state, 'example'
+    setBalls ex.board
+    svgtop[2].attr 'transform', ex.transf()
+    ballseq = (ex.seq[i] for i in [ex.seq.length-1..0])
   else
     seq = decompress getParameterByName state, 'seq'
     config = getParameterByName state, 'config'
@@ -899,25 +902,25 @@ expandBalls = (board, m, fake = false) ->
 exampleBoard = (b) ->
   if b == 'X'
     return {
-      board: expandBalls(reduc2balls("X\n11"),5)
+      board: expandBalls(reduc2balls("X\n11"),6)
       transf: () -> ""
-      seq: "BYYYYBBBRRRR"  
+      seq: "BYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRRRRRRRRR"  
     }
   else if b == 'S'
     return {
       board: expandBalls(reduc2balls("123"),6)
       transf: () -> ""
-      seq: "BBYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRRRRRRRRR"  
+      seq: "BBYYYYYBBBRRRRBBBBBBBYYYYYYBBBRRRRRRRRRRRRRRR"  
     }
   else if b == 'O'
     return {
-      board: expandBalls(reduc2balls("OO\n1111"),6)
+      board: expandBalls(glueballs(reduc2balls("O\n11"), ascii2balls("  \n".repeat(13)+"  "), reduc2balls("O\n11")),6)
       transf: () -> ""
-      seq: "BYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRRRRRRRRR"  
+      seq: "BYYYYBBBRRRRRRBBBBBBBBYYYYBBBBRRRRRRRRRRRRRRR"  
     }
   else if b == 'A'
     return {
-      board: expandBalls(reduc2balls("AA\n1111"),6)
+      board: expandBalls(glueballs(reduc2balls("O\n11"), ascii2balls("  \n".repeat(13)+"  "), reduc2balls("O\n11")),6)
       transf: () -> ""
       seq: "BBBYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRRRRRRRRR"  
     }
