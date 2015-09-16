@@ -1,0 +1,7 @@
+* Title slide
+* Play Bubble Bobble (fceux) [2 levels]
+* Play Puzzle Bobble (MAME) [2 levels]
+* (all while telling story of Bub and Bob)
+* Prior work slide
+* Implementation: index.html
+* (while illustrating set cover implementation on board)
