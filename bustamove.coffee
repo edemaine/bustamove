@@ -452,7 +452,7 @@ shootBall = (angle) ->
   else
     ## Allow another shot during this animation.  This mostly works, but the
     ## animations seem to terminate prematurely...
-    #newBall()
+    newBall()
   drawTrajectory keyangle
 
   ## Animation, link by link.
