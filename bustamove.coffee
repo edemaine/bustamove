@@ -54,6 +54,7 @@ svgballs = (null for i in [0...npanels])
 svgarrow = (null for i in [0...npanels])
 svgaim = (null for i in [0...npanels])
 svgshoot = (null for i in [0...npanels])
+svgseq = null
 svgwidth = svgheight = null
 balls = rowCount = null
 xm = ym = null  ## center x/y coords are between 0 and xm/ym
@@ -208,12 +209,15 @@ draw = () ->
   drawTrajectory keyangle
 
 svggroups = null
+
+circleObject = (parent, color) ->
+  #parent.circle(2*radius).stroke(stroke).fill(colors[color])
+  parent.image("img/ball_#{colors[color]}.png",2*radius,2*radius)
+        .style('image-rendering', 'pixelated')
 makeCircle = (x, y, color) ->
   circles[[x,y]] =
     for panel in [0...npanels]
-      #svggroups[panel][y].circle(2*radius).center(x, y * sqrt3).stroke(stroke).fill(colors[color])
-      svggroups[panel][y].image("img/ball_#{colors[color]}.png",2*radius,2*radius).center(x, y * sqrt3)
-        .style('image-rendering', 'pixelated')
+      circleObject(svggroups[panel][y], color).center(x, y * sqrt3)
 
 circles = {}
 drawBalls = () ->
@@ -402,6 +406,11 @@ drawTrajectory = (angle) ->
   svgtop[1].attr 'transform', "scale(#{bigscale}) translate(#{-last[0]+svgwidth/2/bigscale} #{-firstOccupiedRow()*sqrt3+svgheight*(3/4)/bigscale})"
 
 newBall = () ->
+  svgseq.clear()
+  if ballseq.length > 0
+    for i in [ballseq.length-1..0]
+      console.log ballseq[i]
+      circleObject(svgseq, ballseq[i])
   if ballseq.length == 0
     ballseq.push 'P'
   [x, y] = shotOrigin()
@@ -925,6 +934,7 @@ init = (config) ->
   window.addEventListener 'keydown', keydown
   window.addEventListener 'keyup', keyup
   svg = SVG('surface')#.size width, height
+  svgseq = SVG('surface')
   for panel in [0...npanels]
     svgclip[panel] = svg.defs().rect()
     svgpanel[panel] = svg.group().clipWith(svgclip[panel])
