@@ -192,10 +192,9 @@ setViewbox = () ->
     svgpanel[panel].style 'display', 'inline'
   for panel in [activePanels...npanels]
     svgpanel[panel].style 'display', 'none'
-  svgwidth = xmax + margin - (xmin - margin) + 1.1
-  svgheight = ymax + margin - (ymin - margin) + 1.1
-  svg.viewbox xmin - margin, ymin - margin, xmax + margin + 1.1 + (activePanels-1)*svgwidth, ymax + margin + 1.1
-  ## xxx why +1.1?
+  svgwidth = xmax + margin - (xmin - margin)
+  svgheight = ymax + margin - (ymin - margin)
+  svg.viewbox xmin - margin, ymin - margin, activePanels * svgwidth, svgheight
   for panel in [0...npanels]
     svgpanel[panel].translate panel * svgwidth, 0
     svgclip[panel].move(xmin - margin, ymin - margin).size(svgwidth, svgheight)
