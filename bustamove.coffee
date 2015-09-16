@@ -410,6 +410,7 @@ drawTrajectory = (angle) ->
 seqshow = 30
 
 drawSeq = () ->
+  return if svgseq == null
   box = document.getElementById('seq').getBoundingClientRect()
   seqshow = box.width / box.height
   svgseq.clear()
