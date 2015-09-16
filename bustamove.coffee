@@ -409,15 +409,17 @@ drawTrajectory = (angle) ->
 
 seqshow = 30
 
-newBall = () ->
+drawSeq = () ->
   box = document.getElementById('seq').getBoundingClientRect()
   seqshow = box.width / box.height
   svgseq.clear()
-  show = ballseq[ballseq.length-1..0] + 'P'.repeat seqshow
-  for ball, x in show
+  show = (x for x in 'P'.repeat seqshow).concat(ballseq).reverse()
+  for ball, x in show[...seqshow]
     circleObject(svgseq, ball).center 2*x, 0
   svgseq.viewbox -radius, -radius, 2*x+radius, 2*radius
 
+newBall = () ->
+  drawSeq()
   if ballseq.length == 0
     ballseq.push 'P'
   [x, y] = shotOrigin()
@@ -1052,6 +1054,7 @@ window?.onload = () ->
     surface = document.getElementById('surface')
     surface.style.height =
       Math.floor(window.innerHeight - surface.getBoundingClientRect().top - document.getElementById('seq').getBoundingClientRect().height - 10) + 'px'
+    drawSeq()
   window.addEventListener 'resize', resize
   resize()
   #window.addEventListener 'hashchange', loadState
