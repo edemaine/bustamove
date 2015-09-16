@@ -87,7 +87,13 @@ setBall = (x, y, color) ->
 getBall = (x, y) -> balls[y][x]
 isBall = (x, y) -> colors[balls[y][x]]?
 
+############## STATE SAVE/LOAD
+
+## Return current configuration and ball sequence as a runlength-compressed
+## hash string.  Runlength encoding looks like a character like B or a
+## decimal number followed by a character like 10B (which means 10 B's).
 getState = () ->
+  ## Configuration
   commands = []
   current = null
   flush = () ->
@@ -117,6 +123,7 @@ getState = () ->
   ## remove last |
   config = commands[...-1].join ''
 
+  ## Ball sequence
   commands = []
   current = null
   count = 0
@@ -134,6 +141,7 @@ getState = () ->
 
 currentState = null
 
+## Change the browser's URL to encode the current state (for undo/redo).
 pushState = () ->
   #history.pushState null, 'play', "#config=#{getState()}"
   window.location.hash = currentState = getState()
@@ -150,6 +158,7 @@ getParameterByName = (hash, name) ->
   else
     decodeURIComponent results[1].replace(/\+/g, " ")
 
+## Decompress a runlength-encoded string, adding 'fill' after every character.
 decompress = (compress, fill = '') ->
   return compress unless compress?
   out = ''
@@ -165,6 +174,8 @@ decompress = (compress, fill = '') ->
       count = ''
   out
 
+## Load the given state from hash, either config/seq as from getState(),
+## or an example string via exampleBoard.
 setState = (state) ->
   return if state == currentState
   if getParameterByName state, 'example'
@@ -188,8 +199,12 @@ setState = (state) ->
   draw()
   true
 
+## Load the state given by the browser's current URL (e.g. after back/forward
+## button just pressed).
 loadState = () ->
   setState window.location.hash
+
+##############
 
 setViewbox = () ->
   for panel in [0...activePanels]
