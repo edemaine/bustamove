@@ -432,7 +432,10 @@ scaleTransform = (circle, ball, amount=2) ->
   (t) -> circle.attr 'transform', "translate(#{x} #{y}) scale(#{1+(amount-1)*t}) translate(#{-x} #{-y})"
 
 shootBall = (angle) ->
+  ## Prevent shooting when there's no ball to shoot (during other shot).
   return if svgshoot == null
+
+  ## Compute trajectory and final resting place.
   [bt, collide] = ballTrajectory(angle)
   if collide?
     rot = Math.acos((bt[bt.length-1][0]-collide[0])/2)
@@ -440,11 +443,19 @@ shootBall = (angle) ->
     [x, y] = [Math.round(collide[0]+2*Math.cos(rot2)), Math.round((collide[1]+2*Math.sin(rot2))/sqrt3)]
   else
     [x, y] = [Math.round(bt[bt.length-1][0]/2)*2, Math.round(bt[bt.length-1][1]/sqrt3)]
+  ## Internally, we move the ball to its final position, even before animation.
   setBall(x, y, ballseq.pop())
   circles[[x,y]] = localshoot = svgshoot
-  svgshoot = null
+  if true
+    ## Prevent another shot until animation complete.
+    svgshoot = null
+  else
+    ## Allow another shot during this animation.  This mostly works, but the
+    ## animations seem to terminate prematurely...
+    #newBall()
   drawTrajectory keyangle
 
+  ## Animation, link by link.
   explode = ->
     [cc, fall] = impact [x,y]
     a = null
@@ -476,7 +487,8 @@ shootBall = (angle) ->
     i += 1
     if i < bt.length
       for circle in localshoot
-        circle.animate(1000*distance(bt[i-1],bt[i])/(ymax-ymin),'-').center(bt[i][0], bt[i][1]).after(shoot)
+        ## Original shoot speed at JCDCGG 2015 was 1000.  Now 750.
+        circle.animate(750*distance(bt[i-1],bt[i])/(ymax-ymin),'-').center(bt[i][0], bt[i][1]).after(shoot)
     else if collide?
       rot = Math.acos((bt[i-1][0]-collide[0])/2)
       rot2 = Math.round(rot*3/Math.PI)*Math.PI/3
