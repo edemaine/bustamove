@@ -572,7 +572,7 @@ keymove = (dir, slow) ->
     , keyinterval
 
 keydown = (event) ->
-  #console.log event
+  console.log event
   if event.keyIdentifier == keycurrent
     return false
   else
@@ -585,6 +585,18 @@ keydown = (event) ->
     shootBall keyangle
   else if event.keyIdentifier == 'U+005A'  ## z
     toggleActivePanels()
+  else if event.keyIdentifier == 'U+0041'  ## a
+    keyangle = 3*Math.PI/4
+    drawTrajectory keyangle
+    drawArrow keyangle
+  else if event.keyIdentifier == 'U+0044'  ## d
+    keyangle = Math.PI/4
+    drawTrajectory keyangle
+    drawArrow keyangle
+  else if event.keyIdentifier == 'U+0053'  ## d
+    keyangle = Math.PI/2
+    drawTrajectory keyangle
+    drawArrow keyangle
   false
 
 keyup = (event) ->
@@ -970,7 +982,7 @@ exampleBoard = (b) ->
     return {
       board: expandBalls(reduc2balls(someReduction),500,true)
       transf: () -> "translate(#{xm/2} 0) scale(10) translate(#{-xm/2} 0)"
-      seq: "BBYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRR"  
+      seq: "BBYYYYBBBRRRRBBBBBBYYYYYYYBBBBRRRRRRRBBBBBBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRR"  
     }
   else if b == 'Unscaled'
     someReduction = '''
