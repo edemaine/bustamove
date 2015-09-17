@@ -3,6 +3,9 @@ colors =
   P: 'purple'
   R: 'red'
   Y: 'yellow'
+  N: 'black'
+  W: 'white'
+  G: 'green'
   ' ': null
 blank = ' '
 
@@ -603,6 +606,36 @@ keyup = (event) ->
   keycurrent = null
   keymove 0
   false
+
+level1 = ascii2balls """
+  R R Y Y B B G G
+   R R Y Y B B G
+  B B G G R R Y Y
+   B G G R R Y Y
+
+
+
+
+
+
+
+  """
+
+level1seq = "YRBBYBBBGRBYBBBRBRGRRG"
+
+level2 = ascii2balls """
+        N N      
+         W      
+        W        
+         P      
+        W 
+         G
+        P
+         B
+
+
+
+  """
 
 andLeftGadget = ascii2balls """
    B R          
