@@ -516,7 +516,7 @@ shootBall = (angle) ->
           @center(collide[0]+2*Math.cos(angle), collide[1]+2*Math.sin(angle))
       a.after explode
     else
-      for circle, i in localshoot
+      for circle in localshoot
         a = circle.animate(50,'-').center(Math.round(bt[i-1][0]/2)*2,bt[i-1][1])
       a.after explode
   shoot()
