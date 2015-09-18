@@ -457,6 +457,7 @@ shootBall = (angle) ->
   [bt, collide] = ballTrajectory(angle)
   if collide?
     rot = Math.acos((bt[bt.length-1][0]-collide[0])/2)
+    rot = -rot if bt[bt.length-1][1] < collide[1]
     rot2 = Math.round(rot*3/Math.PI)*Math.PI/3
     [x, y] = [Math.round(collide[0]+2*Math.cos(rot2)), Math.round((collide[1]+2*Math.sin(rot2))/sqrt3)]
   else
@@ -509,6 +510,7 @@ shootBall = (angle) ->
         circle.animate(750*distance(bt[i-1],bt[i])/(ymax-ymin),'-').center(bt[i][0], bt[i][1]).after(shoot)
     else if collide?
       rot = Math.acos((bt[i-1][0]-collide[0])/2)
+      rot = -rot if bt[i-1][1] < collide[1]
       rot2 = Math.round(rot*3/Math.PI)*Math.PI/3
       for circle, i in localshoot
         a = circle.animate(50,'-').during (t) ->
