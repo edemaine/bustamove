@@ -666,6 +666,48 @@ level2 = ascii2balls """
 
   """
 
+level2b = ascii2balls """
+        N N      
+         P      
+        P        
+         W      
+        R 
+         G
+        P
+         P
+
+
+
+  """
+
+level3 = ascii2balls """
+  G             G
+   R G B Y R G B
+  Y     W       Y
+   B Y R G B Y R
+        R 
+         G
+        R
+         
+
+
+
+  """
+
+level4 = ascii2balls """
+    N N     B B   
+     B       P  
+    W       G    
+     G       G  
+    R       G
+     W       R
+    R       P
+     G       W
+
+
+
+  """
+
 andLeftGadget = ascii2balls """
    B R          
   B R   B       
