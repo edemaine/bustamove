@@ -6,6 +6,7 @@ colors =
   N: 'black'
   W: 'white'
   G: 'green'
+  O: 'orange'
   ' ': null
 blank = ' '
 
