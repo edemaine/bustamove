@@ -76,8 +76,8 @@ hexafont =
      N N N N O 
       O N O O O
      O O N O O 
-      O N O O O
-     N N O O O '''
+      O O N O O
+     N N N O O '''
   K: '''
      N O O O O 
       N O O N O
@@ -91,39 +91,39 @@ hexafont =
       N O O O O
      N N N N O '''
   M: '''
-     N N O N N 
+     N O O N O 
       N N N N O
-     N O N O N 
+     O N N O N 
       N O O N O
-     N O O O N '''
+     N O O N O '''
   N: '''
-     N N O O N 
+     N O O N O 
       N N O N O
-     N O N O N 
+     O N N O N 
       N O N N O
-     N O O N N '''
+     N O O N O '''
   O: '''
      O N N N O 
       N O O N O
-     N O O O N 
+     O N O O N 
       N O O N O
      O N N N O '''
   P: '''
      N N N N O 
       N O O N O
-     N N N N O 
+     O N N N O 
       N O O O O
      N O O O O '''
   Q: '''
      O N N N O 
       N O O N O
-     N O O O N 
+     O N O N N 
       N O O N O
      O N N N N '''
   R: '''
      N N N N O 
       N O O N O
-     N N N N O 
+     O N N N O 
       N O O N O
      N O O O N '''     
   S: '''
@@ -137,11 +137,11 @@ hexafont =
       O N O O O
      O O N O O 
       O N O O O
-     O O N O O '''
+     O N O O O '''
   U: '''
-     N O O O N 
+     N O O N O 
       N O O N O
-     N O O O N 
+     O N O O N 
       N O O N O
      O N N N O '''
   V: '''
@@ -153,27 +153,27 @@ hexafont =
   W: '''
      N O O O N 
       N O O N O
-     N O N O N 
+     O N N O N 
       N N N N O
-     N N O N N '''
+     N O O N N '''
   X: '''
-     N N O N N 
+     O N O N O 
       O N N O O
-     O O N O O 
+     O N N O O 
       O N N O O
-     N N O N N '''
+     O N O N O '''
   Y: '''
-     N N O N N 
+     O N O N O 
       O N N O O
      O O N O O 
       O N O O O
-     N N O O O '''
+     O N O O O '''
   Z: '''
-     N N N N N 
+     O N N N O 
       O O N O O
      O O N O O 
       O N O O O
-     N N N N N '''
+     O N N N O '''
 
 ## ASCII
 ##  R R
