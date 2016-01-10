@@ -10,6 +10,33 @@ colors =
   ' ': null
 blank = ' '
 
+## FONT
+hexafont =
+  A: '''
+     O O N O O
+      O N N O O
+     O N O N O
+      N N N N O
+     N O O O N'''
+  B: '''
+     N N N N O
+      N O O N O
+     N N N N O
+      N O O N O
+     N N N N O'''
+  C: '''
+     O N N N O
+      N O O N O
+     N O O O O
+      N O O N O
+     O N N N O'''
+  D: '''
+     N N N N O
+      N O O N O
+     N O O O N
+      N O O N O
+     N N N N O'''
+     
 ## ASCII
 ##  R R
 ## B B P
