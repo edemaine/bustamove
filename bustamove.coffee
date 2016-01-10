@@ -105,7 +105,7 @@ hexafont =
   O: '''
      O N N N O 
       N O O N O
-     O N O O N 
+     N O O O N 
       N O O N O
      O N N N O '''
   P: '''
@@ -117,7 +117,7 @@ hexafont =
   Q: '''
      O N N N O 
       N O O N O
-     O N O N N 
+     N O O N N 
       N O O N O
      O N N N N '''
   R: '''
@@ -125,13 +125,13 @@ hexafont =
       N O O N O
      O N N N O 
       N O O N O
-     N O O O N '''     
+     N O O N O '''     
   S: '''
-     O N N N N 
+     O N N N O 
       N O O O O
      O N N N O 
       O O O N O
-     N N N N O '''
+     O N N N O '''
   T: '''
      N N N N O 
       O N O O O
