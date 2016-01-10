@@ -79,11 +79,11 @@ hexafont =
       N O N O O
      O N N O O '''
   K: '''
-     O N O N O 
-      N O N O O
-     O N N O O 
-      N O N O O
-     O N O N O '''
+     O N O O N 
+      N O O N O
+     O N N N O 
+      N O O N O
+     O N O O N '''
   L: '''
      N O O O O 
       N O O O O
@@ -91,14 +91,14 @@ hexafont =
       N O O O O
      N N N N O '''
   M: '''
-     N N N N O 
-      N O O N O
-     O N O O N 
-      N O O N O
-     N O O N O '''
+     N N N N N O 
+      N O N O N O
+     O N O O O N 
+      N O O O N O
+     N O O O N O '''
   N: '''
-     O O O N O 
-      N O O N O
+     N O O N O 
+      N N O N O
      O N N O N 
       N O N N O
      N O O N O '''
@@ -151,11 +151,11 @@ hexafont =
       O N N O O
      O O N O O '''
   W: '''
-     N O O N O 
-      N O O N O
-     O N O O N 
-      N N N N O
-     N O O N O '''
+     N O O O N O 
+      N O O O N O
+     O N O O O N 
+      N O N O N O
+     N N N N N O '''
   X: '''
      O N O N O 
       O N N O O
