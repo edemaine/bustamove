@@ -13,30 +13,72 @@ blank = ' '
 ## FONT
 hexafont =
   A: '''
-     O O N O O
+     O O N O O 
       O N N O O
-     O N O N O
+     O N O N O 
       N N N N O
-     N O O O N'''
+     N O O O N '''
   B: '''
-     N N N N O
+     N N N N O 
       N O O N O
-     N N N N O
+     N N N N O 
       N O O N O
-     N N N N O'''
+     N N N N O '''
   C: '''
-     O N N N O
+     O N N N O 
       N O O N O
-     N O O O O
+     N O O O O 
       N O O N O
-     O N N N O'''
+     O N N N O '''
   D: '''
-     N N N N O
+     N N N N O 
       N O O N O
-     N O O O N
+     N O O O N 
       N O O N O
-     N N N N O'''
-     
+     N N N N O '''
+  E: '''
+     N N N N O 
+      N O O O O
+     N N N O O 
+      N O O O O
+     N N N N O '''
+  F: '''
+     N N N N O 
+      N O O O O
+     N N N O O 
+      N O O O O
+     N O O O O '''
+  G: '''
+     O N N N O 
+      N O O O O
+     N O O N N 
+      N O O N O
+     O N N N O '''
+  H: '''
+     N O O N O 
+      N O O N O
+     N N N N O 
+      N O O N O
+     N O O N O '''
+  I: '''
+     N N N N O 
+      O N O O O
+     O O N O O 
+      O N O O O
+     N N N N O '''
+  J: '''
+     N N N N O 
+      O O N O O
+     O O O N O 
+      O O N O O
+     O N N O O '''
+  K: '''
+     N O O O N 
+      N O O N O
+     N N N N O 
+      N O O N O
+     N O O O O '''
+
 ## ASCII
 ##  R R
 ## B B P
