@@ -73,11 +73,101 @@ hexafont =
       O O N O O
      O N N O O '''
   K: '''
-     N O O O N 
+     N O O O O 
       N O O N O
      N N N N O 
       N O O N O
+     N O O O N '''
+  L: '''
+     N O O O O 
+      N O O O O
+     N O O O O 
+      N O O O O
+     N N N N O '''
+  M: '''
+     N N O N N 
+      N N N N O
+     N O N O N 
+      N O O N O
+     N O O O N '''
+  N: '''
+     N N O O N 
+      N N O N O
+     N O N O N 
+      N O N N O
+     N O O N N '''
+  O: '''
+     O N N N O 
+      N O O N O
+     N O O O N 
+      N O O N O
+     O N N N O '''
+  P: '''
+     N N N N O 
+      N O O N O
+     N N N N O 
+      N O O O O
      N O O O O '''
+  Q: '''
+     O N N N O 
+      N O O N O
+     N O O O N 
+      N O O N O
+     O N N N N '''
+  R: '''
+     N N N N O 
+      N O O N O
+     N N N N O 
+      N O O N O
+     N O O O N '''     
+  S: '''
+     O N N N N 
+      N O O O O
+     O N N N O 
+      O O O N O
+     N N N N O '''
+  T: '''
+     N N N N O 
+      O N O O O
+     O O N O O 
+      O N O O O
+     O O N O O '''
+  U: '''
+     N O O O N 
+      N O O N O
+     N O O O N 
+      N O O N O
+     O N N N O '''
+  V: '''
+     N O O O N 
+      N O O N O
+     O N O N O 
+      O N N O O
+     O O N O O '''
+  W: '''
+     N O O O N 
+      N O O N O
+     N O N O N 
+      N N N N O
+     N N O N N '''
+  X: '''
+     N N O N N 
+      O N N O O
+     O O N O O 
+      O N N O O
+     N N O N N '''
+  Y: '''
+     N N O N N 
+      O N N O O
+     O O N O O 
+      O N O O O
+     N N O O O '''
+  Z: '''
+     N N N N N 
+      O O N O O
+     O O N O O 
+      O N O O O
+     N N N N N '''
 
 ## ASCII
 ##  R R
