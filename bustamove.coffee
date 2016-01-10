@@ -27,43 +27,43 @@ hexafont =
   B: '''
      N N N N O 
       N O O N O
-     N N N N O 
+     O N N N O 
       N O O N O
      N N N N O '''
   C: '''
      O N N N O 
-      N O O N O
+      N O O O O
      N O O O O 
-      N O O N O
+      N O O O O
      O N N N O '''
   D: '''
      N N N N O 
       N O O N O
-     N O O O N 
+     O N O O N 
       N O O N O
      N N N N O '''
   E: '''
      N N N N O 
       N O O O O
-     N N N O O 
+     O N N O O 
       N O O O O
      N N N N O '''
   F: '''
      N N N N O 
       N O O O O
-     N N N O O 
+     O N N O O 
       N O O O O
      N O O O O '''
   G: '''
      O N N N O 
       N O O O O
-     N O O N N 
+     N O O N O 
       N O O N O
      O N N N O '''
   H: '''
      N O O N O 
       N O O N O
-     N N N N O 
+     O N N N N 
       N O O N O
      N O O N O '''
   I: '''
@@ -74,20 +74,20 @@ hexafont =
      N N N N O '''
   J: '''
      N N N N O 
-      O O N O O
-     O O O N O 
-      O O N O O
-     O N N O O '''
+      O N O O O
+     O O N O O 
+      O N O O O
+     N N O O O '''
   K: '''
      N O O O O 
       N O O N O
-     N N N N O 
+     O N N N O 
       N O O N O
      N O O O N '''
   L: '''
      N O O O O 
       N O O O O
-     N O O O O 
+     O N O O O 
       N O O O O
      N N N N O '''
   M: '''
