@@ -12,6 +12,12 @@ blank = ' '
 
 ## FONT
 hexafont =
+  ' ': '''
+       O 
+        O
+       O 
+        O
+       O '''
   A: '''
      O O N O O 
       O N N O O
@@ -175,6 +181,22 @@ hexafont =
 ascii2balls = (ascii) ->
   ## Turn string into a 2D array of characters.
   ascii.replace(/\r\n/g, '\n').replace(/\r/g,'\n').split('\n')
+
+recolorballs = (balls, mapping) ->
+  for row in balls
+    for col in row
+      if col of mapping
+        mapping[col]
+      else
+        col
+
+padballs = (balls, fill1 = ' ', fill2 = ' ', width = Math.max (row.length for row in balls)...) ->
+  for row, i in balls
+    fill = if i % 2 == 0
+      fill1
+    else
+      fill2
+    row + fill.repeat Math.max 0, (width - row.length) / fill.length
 
 glueballs = (b1, brest...) ->
   ## glue horizontally. All rows must be same length, number of rows must be the same.
@@ -346,7 +368,15 @@ setState = (state) ->
     setBalls ex.board
     svgtop[2].attr 'transform', ex.transf()
     ballseq = (ex.seq[i] for i in [ex.seq.length-1..0])
-  else
+  else if getParameterByName state, 'text'
+    text = getParameterByName state, 'text'
+    balls = fontBoard text
+    balls = recolorballs balls,
+      O: 'W'
+      N: 'P'
+    setBalls balls
+    ballseq = ('W' for i in [0..text.length])
+  else # if getParameterByName state, 'seq'
     seq = decompress getParameterByName state, 'seq'
     config = getParameterByName state, 'config'
     return false unless seq? and config?
@@ -1122,7 +1152,7 @@ reduc2balls = (reduc) ->
         console.log "plugpos" + [pos, pos-curcol-3]
         pluglayer = glueballs(pluglayer, repeatballs(noplug1Gadget, pos-curcol-3), plugGadget)
         curcol = pos+4
-      pluglayer = glueballs(pluglayer, repeatballs(noplug1Gadget, 7*nplugs-curcol+1))      
+      pluglayer = glueballs(pluglayer, repeatballs(noplug1Gadget, 7*nplugs-curcol+1))
       board = pluglayer.concat board
     if 'A' in red[i]
       alayer = repeatballs(andLeftGadget, 0)
@@ -1262,6 +1292,18 @@ exampleBoard = (b) ->
       transf: () -> ""
       seq: "BBYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRR"  
     }
+
+fontBoard = (text) ->
+  rows = for line in text.split '\n'
+    chars = for char in line when char of hexafont
+      ascii2balls hexafont[char]
+    row = glueballs chars...
+    row.push ' O'.repeat row[0].length / 2
+    row
+  balls = [].concat rows...
+  balls = padballs balls, 'O ', ' O'
+  balls.push '' for e in [1..5]
+  balls
 
 init = (config) ->
   window.addEventListener 'keydown', keydown
