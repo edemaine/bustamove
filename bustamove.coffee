@@ -318,7 +318,7 @@ slantfont =
        O O O N O O O '''
   'N': '''
        O O O N O O O 
-        O O N N O O O
+        O O N O O O O
        O O N N O O N 
         O N O N O N O
        O N O N O N O 
@@ -396,6 +396,56 @@ slantfont =
        O N O O N O O 
         O N N N O O O
        O O O O O O O '''
+  'V': '''
+       O O O N O O O 
+        O O N O O O O
+       O O N O O O N 
+        O N O O O N O
+       O O N O O N O 
+        O N O N N O O
+       O O N N O O O 
+        O N O O O O O
+       O O O O O O O '''
+  'W': '''
+       O O O N O O O 
+        O O N O O O O
+       O O N O O O N 
+        O N O O O N O
+       O N O O O N O 
+        N N N O N O O
+       N O O N N O O 
+        O O O N O O O
+       O O O N O O O '''
+  'X': '''
+       O O O N O O O 
+        O O N O O O O
+       O O N O O O N 
+        O O N O O N O
+       O N N N N N O 
+        N O O N O O O
+       N O O O N O O 
+        O O O N O O O
+       O O O N O O O '''
+  'Y': '''
+       O O O N O O O 
+        O O N O O O O
+       O O N O O O N 
+        O O N O O N O
+       O O O N N N O 
+        O O N O O O O
+       O O N O O O O 
+        O N O O O O O
+       O O O O O O O '''
+  'Z': '''
+       O O O N O O O 
+        O O O N N O O
+       O O O O O N N 
+        O O O N N O O
+       O O O N O O O 
+        O N N O O O O
+       N N O O O O O 
+        O N N O O O O
+       O O O N O O O '''
 
 fonts =
   plain: hexafont
