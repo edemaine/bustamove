@@ -175,6 +175,48 @@ hexafont =
       O N O O O
      O N N N O '''
 
+slantfont =
+  'A': '''
+       O O O O O O O 
+        O O O N N O O
+       O O N N O N O 
+        O N O O N O O
+       O N O O O N O 
+        N O N O N O O
+       N O O O N O O 
+        O O O N O O O
+       O O O N O O O '''
+  'B': '''
+       O O O N O O O 
+        O O N N N O O
+       O O N O O N O 
+        O N O O O N O
+       O N O N N N O 
+        N O O N O O O
+       N N O O N O O 
+        O N N N O O O
+       O O O O O O O '''
+  'C': '''
+       O O O O O O O 
+        O O N N N O O
+       O O N O O N O 
+        O N O O O N O
+       O N O O O O O 
+        N O O O O O O
+       O N O O O O O 
+        O N N N O O O
+       O O O O O O O '''
+  'D': '''
+       O O O N O O O 
+        O O N N N O O
+       O O N O O N O 
+        O N O O O N O
+       O N O O O N O 
+        N O O O N O O
+       N N O O N O O 
+        O N N N O O O
+       O O O O O O O '''
+       
 ## ASCII
 ##  R R
 ## B B P
