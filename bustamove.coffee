@@ -436,7 +436,8 @@ setState = (state) ->
     ballseq = (ex.seq[i] for i in [ex.seq.length-1..0])
   else if getParameterByName state, 'text'
     text = getParameterByName state, 'text'
-    balls = fontBoard text
+    font = getParameterByName state, 'font'
+    balls = fontBoard text, font
     balls = recolorballs balls,
       O: 'W'
       N: 'P'
@@ -860,7 +861,7 @@ keymove = (dir, slow) ->
     , keyinterval
 
 keydown = (event) ->
-  console.log event
+  #console.log event
   if event.keyIdentifier == keycurrent
     return false
   else
@@ -1273,7 +1274,7 @@ expandBalls = (board, m, fake = false) ->
       ball = "  "
     else
       ball = row[0..1]
-    console.log "ball "+ball + " k "+k
+    #console.log "ball "+ball + " k "+k
     newboard.push(ball.repeat(k)+row+ball.repeat(k))
   for i in [1..Math.floor(2*m/sqrt3)]
     newboard.push("  ")
@@ -1359,10 +1360,12 @@ exampleBoard = (b) ->
       seq: "BBYYYYBBBRRRRBBBBBBYYYBBBBRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRRBBBBBBBBYYYYYYBBBBBBBBRRRRRRRR"  
     }
 
-fontBoard = (text) ->
+fontBoard = (text, font = 'plain') ->
+  font = fonts[font] if font of fonts
   rows = for line in text.split '\n'
-    chars = for char in line when char of hexafont
-      ascii2balls hexafont[char]
+    chars = for char in line when char of font
+      ascii2balls font[char]
+    console.log chars
     row = glueballs chars...
     row.push ' O'.repeat row[0].length / 2
     row
