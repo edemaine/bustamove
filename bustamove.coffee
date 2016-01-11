@@ -216,7 +216,31 @@ slantfont =
        N N O O N O O 
         O N N N O O O
        O O O O O O O '''
-       
+  'E': '''
+       O O O N O O O 
+        O O N N N O O
+       O O N O O N N 
+        O N N O O O O
+       O N O N O O O 
+        N O O O O O O
+       N N O O O O O 
+        O N N O O O O
+       O O O N O O O '''
+  'F': '''
+       O O O N O O O 
+        O O N N N O O
+       O O N O O N N 
+        O N N O O O O
+       O N O N O O O 
+        N O O O O O O
+       N O O O O O O 
+        O O O O O O O
+       O O O O O O O '''
+
+fonts =
+  plain: hexafont
+  slant: slantfont
+
 ## ASCII
 ##  R R
 ## B B P
