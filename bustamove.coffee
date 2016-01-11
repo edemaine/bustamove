@@ -376,6 +376,26 @@ slantfont =
        O N O O N O O 
         O N N N O O O
        O O O O O O O '''
+  'T': '''
+       O O O N O O O 
+        O O O N N O O
+       O O O O N N N 
+        O O O N O O O
+       O O O N O O O 
+        O O N O O O O
+       O O N O O O O 
+        O N O O O O O
+       O O O O O O O '''
+  'U': '''
+       O O O N O O O 
+        O O N O O O O
+       O O N O O O N 
+        O N O O O N O
+       O N O O O N O 
+        N O O O N O O
+       O N O O N O O 
+        O N N N O O O
+       O O O O O O O '''
 
 fonts =
   plain: hexafont
