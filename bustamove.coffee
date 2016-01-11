@@ -260,9 +260,9 @@ slantfont =
        O O O N O O O 
         O O N O O O O
        O O N O O O N 
-        O N N O O N O
+        O N O O O N O
        O N N N N N O 
-        N O O N N O O
+        N O O O N O O
        N O O O N O O 
         O O O N O O O
        O O O N O O O '''
@@ -333,6 +333,46 @@ slantfont =
         O N O O O N O
        O N O O O N O 
         N O O O N O O
+       O N O O N O O 
+        O N N N O O O
+       O O O O O O O '''
+  'P': '''
+       O O O N O O O 
+        O O N N N O O
+       O O N O O N O 
+        O N O O O N O
+       O N N O O N O 
+        N O N N N O O
+       N O O O O O O 
+        O O O O O O O
+       O O O O O O O '''
+  'Q': '''
+       O O O O O O O 
+        O O N N N O O
+       O O N O O N O 
+        O N O O O N O
+       O N O O O N O 
+        N O N O N O O
+       O N O N N O O 
+        O N N N O O O
+       O O O O N O O '''
+  'R': '''
+       O O O N O O O 
+        O O N N N O O
+       O O N O O N O 
+        O N O O O N O
+       O N N O O N O 
+        N O N N N O O
+       N O O N O O O 
+        O O O N O O O
+       O O O N O O O '''
+  'S': '''
+       O O O O O O O 
+        O O N N N O O
+       O O N O O N O 
+        O O N O O N O
+       O O O N O O O 
+        N O O N O O O
        O N O O N O O 
         O N N N O O O
        O O O O O O O '''
