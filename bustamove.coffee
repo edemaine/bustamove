@@ -425,15 +425,9 @@ padballs = (balls, fill1 = ' ', fill2 = ' ', width = Math.max (row.length for ro
     row + fill.repeat Math.max 0, (width - row.length) / fill.length
 
 glueballs = (b1, brest...) ->
-  ## glue horizontally. All rows must be same length, number of rows must be the same.
-  if brest.length == 0
-    balls = b1
-  else
-    balls = []
-    b2 = glueballs(brest...)
-    for i in [0...b1.length]
-      balls.push b1[i]+b2[i]
-  balls
+  return [] unless b1?
+  for b, i in b1
+    b.concat (bb[i] for bb in brest)...
 
 repeatballs = (b, k) ->
   if k <= 0
@@ -1408,7 +1402,7 @@ reduc2balls = (reduc) ->
         console.log "plugpos" + [pos, pos-curcol-3]
         pluglayer = glueballs(pluglayer, repeatballs(noplug1Gadget, pos-curcol-3), plugGadget)
         curcol = pos+4
-      pluglayer = glueballs(pluglayer, repeatballs(noplug1Gadget, 7*nplugs-curcol+1))      
+      pluglayer = glueballs(pluglayer, repeatballs(noplug1Gadget, 7*nplugs-curcol+1))
       board = pluglayer.concat board
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
   #board = board.concat glueballs(blankGadget, blankGadget, blankGadget)
@@ -1525,10 +1519,14 @@ fontBoard = (text, font = 'plain') ->
   rows = for line in text.split '\n'
     chars = for char in line when char of font
       ascii2balls font[char]
-    console.log chars
     row = glueballs chars...
-    row.push ' O'.repeat row[0].length / 2
+    if row.length == 0
+      row = ('' for i in font[' '])
+    console.log line, row
     row
+  width = Math.max (row.length for row in rows)
+  for row in rows
+    row.push ' O'.repeat width / 2
   balls = [].concat rows...
   balls = padballs balls, 'O ', ' O'
   balls.push '' for e in [1..5]
