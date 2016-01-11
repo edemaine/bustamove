@@ -176,6 +176,16 @@ hexafont =
      O N N N O '''
 
 slantfont =
+  ' ': '''
+       O 
+        O
+       O 
+        O
+       O 
+        O
+       O 
+        O
+       O '''
   'A': '''
        O O O O O O O 
         O O O N N O O
@@ -265,6 +275,66 @@ slantfont =
         O O N O O O O
        O O N O O O O 
         O N O O O O O
+       O O O O O O O '''
+  'J': '''
+       O O O O O O O 
+        O O O O N O O
+       O O O O O N N 
+        O O O O O N O
+       O O O O O N O 
+        N O O O N O O
+       O N O O N O O 
+        O N N N O O O
+       O O O O O O O '''
+  'K': '''
+       O O O N O O O 
+        O O N O O O O
+       O O N O O N N 
+        O N N N N O O
+       O N N O O O O 
+        N O N O O O O
+       N O O N O O O 
+        O O N O O O O
+       O O O N O O O '''
+  'L': '''
+       O O O N O O O 
+        O O N O O O O
+       O O N O O O O 
+        O N O O O O O
+       O N O O O O O 
+        N O O O O O O
+       N N O O O O O 
+        O N N O O O O
+       O O O N O O O '''
+  'M': '''
+       O O O N O O O 
+        O O N O O O O
+       O O N N O O N 
+        O N O N N N O
+       O N O O O N O 
+        N O O O N O O
+       N O O O N O O 
+        O O O N O O O
+       O O O N O O O '''
+  'N': '''
+       O O O N O O O 
+        O O N N O O O
+       O O N N O O N 
+        O N O N O N O
+       O N O N O N O 
+        N O N O N O O
+       N O O N N O O 
+        O O N N O O O
+       O O O N O O O '''
+  'O': '''
+       O O O O O O O 
+        O O N N N O O
+       O O N O O N O 
+        O N O O O N O
+       O N O O O N O 
+        N O O O N O O
+       O N O O N O O 
+        O N N N O O O
        O O O O O O O '''
 
 fonts =
