@@ -236,6 +236,36 @@ slantfont =
        N O O O O O O 
         O O O O O O O
        O O O O O O O '''
+  'G': '''
+       O O O O O O O 
+        O O N N N O O
+       O O N O O N O 
+        O N O O O N O
+       O N O O O O O 
+        N O O O O O O
+       O N O O N O O 
+        O N N N O O O
+       O O O N O O O '''
+  'H': '''
+       O O O N O O O 
+        O O N O O O O
+       O O N O O O N 
+        O N N O O N O
+       O N N N N N O 
+        N O O N N O O
+       N O O O N O O 
+        O O O N O O O
+       O O O N O O O '''
+  'I': '''
+       O O O O O O O 
+        O O O O N O O
+       O O O O N O O 
+        O O O N O O O
+       O O O N O O O 
+        O O N O O O O
+       O O N O O O O 
+        O N O O O O O
+       O O O O O O O '''
 
 fonts =
   plain: hexafont
