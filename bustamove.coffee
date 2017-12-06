@@ -1066,31 +1066,33 @@ keymove = (dir, slow) ->
 
 keydown = (event) ->
   #console.log event
-  if event.keyIdentifier == keycurrent
+  if event.keyCode == keycurrent
     return false
   else
-    keycurrent = event.keyIdentifier
-  if event.keyIdentifier == 'Left'
-    keymove +1, event.shiftKey
-  else if event.keyIdentifier == 'Right'
-    keymove -1, event.shiftKey
-  else if event.keyIdentifier == 'U+0020'  ## Space
-    shootBall keyangle
-  else if event.keyIdentifier == 'U+005A'  ## z
-    toggleActivePanels()
-  else if event.keyIdentifier == 'U+0041'  ## a
-    keyangle = 3*Math.PI/4
-    drawTrajectory keyangle
-    drawArrow keyangle
-  else if event.keyIdentifier == 'U+0044'  ## d
-    keyangle = Math.PI/4
-    drawTrajectory keyangle
-    drawArrow keyangle
-  else if event.keyIdentifier == 'U+0053'  ## d
-    keyangle = Math.PI/2
-    drawTrajectory keyangle
-    drawArrow keyangle
-  false
+    keycurrent = event.keyCode
+  switch event.keyCode
+    when 37  ## left arrow
+      keymove +1, event.shiftKey
+    when 39  ## right arrow
+      keymove -1, event.shiftKey
+    when 32  ## space
+      shootBall keyangle
+    when 90  ## z
+      toggleActivePanels()
+    when 65  ## a
+      keyangle = 3*Math.PI/4
+      drawTrajectory keyangle
+      drawArrow keyangle
+    when 68  ## d
+      keyangle = Math.PI/4
+      drawTrajectory keyangle
+      drawArrow keyangle
+    when 83  ## s
+      keyangle = Math.PI/2
+      drawTrajectory keyangle
+      drawArrow keyangle
+    else
+      false
 
 keyup = (event) ->
   keycurrent = null
